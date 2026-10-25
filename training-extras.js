@@ -67,3 +67,9 @@ renderDashboard = function(){
 
 renderTraining();
 renderDashboard();
+
+// Load the Garmin-ready automation layer separately so the core training UI stays simple.
+const healthAutomationScript = document.createElement('script');
+healthAutomationScript.src = './health-automation.js?v=1';
+healthAutomationScript.async = false;
+document.head.appendChild(healthAutomationScript);
