@@ -1,0 +1,12 @@
+{
+  "name": "Romy Health",
+  "short_name": "Romy Health",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#fbf8fa",
+  "theme_color": "#f58ab6",
+  "description": "Persoonlijke health-, training- en voedingsapp.",
+  "icons": [
+    {"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}
