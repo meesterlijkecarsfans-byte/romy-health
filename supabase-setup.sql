@@ -48,8 +48,8 @@ revoke all on table public.garmin_daily from anon, authenticated;
 revoke all on table public.garmin_activities from anon, authenticated;
 
 grant select, insert, update on table public.user_state to authenticated;
-grant select on table public.garmin_daily to authenticated;
-grant select on table public.garmin_activities to authenticated;
+grant select, insert, update on table public.garmin_daily to authenticated;
+grant select, insert, update on table public.garmin_activities to authenticated;
 
 -- user_state policies
 drop policy if exists "Users can read own Romy Health state" on public.user_state;
@@ -59,11 +59,21 @@ create policy "Users can read own Romy Health state" on public.user_state for se
 create policy "Users can insert own Romy Health state" on public.user_state for insert to authenticated with check ((select auth.uid()) = user_id);
 create policy "Users can update own Romy Health state" on public.user_state for update to authenticated using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
 
--- Garmin rows are written only by the Edge Function (service role bypasses RLS).
+-- Garmin policies: the Edge Function runs with your normal signed-in user JWT.
 drop policy if exists "Users can read own Garmin daily data" on public.garmin_daily;
+drop policy if exists "Users can insert own Garmin daily data" on public.garmin_daily;
+drop policy if exists "Users can update own Garmin daily data" on public.garmin_daily;
 drop policy if exists "Users can read own Garmin activities" on public.garmin_activities;
+drop policy if exists "Users can insert own Garmin activities" on public.garmin_activities;
+drop policy if exists "Users can update own Garmin activities" on public.garmin_activities;
+
 create policy "Users can read own Garmin daily data" on public.garmin_daily for select to authenticated using ((select auth.uid()) = user_id);
+create policy "Users can insert own Garmin daily data" on public.garmin_daily for insert to authenticated with check ((select auth.uid()) = user_id);
+create policy "Users can update own Garmin daily data" on public.garmin_daily for update to authenticated using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
+
 create policy "Users can read own Garmin activities" on public.garmin_activities for select to authenticated using ((select auth.uid()) = user_id);
+create policy "Users can insert own Garmin activities" on public.garmin_activities for insert to authenticated with check ((select auth.uid()) = user_id);
+create policy "Users can update own Garmin activities" on public.garmin_activities for update to authenticated using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
 
 create index if not exists garmin_daily_user_date_idx on public.garmin_daily(user_id, calendar_date desc);
 create index if not exists garmin_activities_user_start_idx on public.garmin_activities(user_id, start_time desc);
