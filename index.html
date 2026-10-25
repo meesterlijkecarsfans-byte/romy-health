@@ -86,7 +86,7 @@
         <div class="page-heading">
           <p class="eyebrow">Bewegen</p>
           <h2>Training</h2>
-          <p>Vink af wat je deze week hebt gedaan. Alles wordt alleen op dit apparaat opgeslagen.</p>
+          <p>Vink af wat je deze week hebt gedaan. Met cloud sync blijft dit gelijk op je telefoon en laptop.</p>
         </div>
 
         <div class="week-switcher">
@@ -113,7 +113,7 @@
         <div class="page-heading">
           <p class="eyebrow">Hardlopen</p>
           <h2>Loopschema</h2>
-          <p>Je opbouw richting langere duurlopen, met races en herstelweken duidelijk gemarkeerd.</p>
+          <p>Je opbouw richting langere duurlopen, met tempo, hartslagzones, races en herstelweken duidelijk gemarkeerd.</p>
         </div>
         <div class="run-filters" id="runFilters">
           <button class="chip active" data-filter="all">Alles</button>
@@ -238,13 +238,15 @@
       <div class="settings-list">
         <button id="exportData"><span>↓</span><div><strong>Backup exporteren</strong><small>Download je lokale gegevens als JSON</small></div></button>
         <label class="import-row"><span>↑</span><div><strong>Backup importeren</strong><small>Herstel eerder geëxporteerde gegevens</small></div><input id="importData" type="file" accept="application/json" /></label>
-        <button id="resetLocalData" class="danger-row"><span>↺</span><div><strong>Lokale wijzigingen wissen</strong><small>Herstel de gegevens uit je oorspronkelijke document</small></div></button>
+        <button id="resetLocalData" class="danger-row"><span>↺</span><div><strong>Lokale wijzigingen wissen</strong><small>Wis alleen de lokale kopie op dit apparaat</small></div></button>
       </div>
-      <p class="privacy-note">Je persoonlijke gezondheidsgegevens worden lokaal in je browser opgeslagen en niet naar GitHub gestuurd.</p>
+      <p class="privacy-note">Zonder cloudaccount blijven je gegevens lokaal op dit apparaat.</p>
     </div>
   </section>
 
   <script src="app.js"></script>
   <script src="schedule.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-sync.js"></script>
 </body>
 </html>
