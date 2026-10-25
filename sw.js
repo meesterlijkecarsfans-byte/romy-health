@@ -1,5 +1,5 @@
 const CACHE='romy-health-v7';
-const CORE=['./styles.css','./app.js','./schedule.js','./training-extras.js','./health-automation.js','./supabase-sync.js','./manifest.json','./icon.svg'];
+const CORE=['./styles.css','./app.js','./schedule.js','./training-extras.js','./supabase-sync.js','./health-automation.js','./manifest.json','./icon.svg'];
 
 self.addEventListener('install',event=>{
   self.skipWaiting();
@@ -18,27 +18,9 @@ self.addEventListener('fetch',event=>{
   if(event.request.method!=='GET') return;
   const url=new URL(event.request.url);
   if(url.origin!==self.location.origin) return;
-
   if(event.request.mode==='navigate' || url.pathname.endsWith('/index.html') || url.pathname.endsWith('/')){
-    event.respondWith(
-      fetch(event.request)
-        .then(response=>{
-          const copy=response.clone();
-          caches.open(CACHE).then(cache=>cache.put(event.request,copy));
-          return response;
-        })
-        .catch(()=>caches.match(event.request).then(hit=>hit||caches.match('./index.html')))
-    );
+    event.respondWith(fetch(event.request).then(response=>{const copy=response.clone();caches.open(CACHE).then(cache=>cache.put(event.request,copy));return response;}).catch(()=>caches.match(event.request).then(hit=>hit||caches.match('./index.html'))));
     return;
   }
-
-  event.respondWith(
-    fetch(event.request)
-      .then(response=>{
-        const copy=response.clone();
-        caches.open(CACHE).then(cache=>cache.put(event.request,copy));
-        return response;
-      })
-      .catch(()=>caches.match(event.request))
-  );
+  event.respondWith(fetch(event.request).then(response=>{const copy=response.clone();caches.open(CACHE).then(cache=>cache.put(event.request,copy));return response;}).catch(()=>caches.match(event.request)));
 });
