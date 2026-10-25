@@ -1,4 +1,4 @@
-const CACHE='romy-health-v9';
+const CACHE='romy-health-v10';
 const CORE=['./styles.css','./app.js','./schedule.js','./training-extras.js','./nutrition-import.js','./supabase-sync.js','./health-automation.js','./nightly-review.js','./manifest.json','./icon.svg'];
 
 self.addEventListener('install',event=>{
