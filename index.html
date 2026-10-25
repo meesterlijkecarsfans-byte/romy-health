@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f58ab6" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Romy Health" />
+  <title>Romy Health</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow" id="todayLabel">Vandaag</p>
+        <h1>Romy Health</h1>
+      </div>
+      <button class="icon-button" id="settingsButton" aria-label="Instellingen">⚙︎</button>
+    </header>
+
+    <main>
+      <section class="view active" id="view-today" data-view="today">
+        <div class="hero-card">
+          <div>
+            <p class="eyebrow light">Jouw week</p>
+            <h2 id="heroTitle">Lekker bezig</h2>
+            <p class="hero-copy" id="heroCopy">Je overzicht wordt geladen…</p>
+          </div>
+          <div class="hero-orb" aria-hidden="true">♡</div>
+        </div>
+
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Vandaag</p>
+            <h2>In één oogopslag</h2>
+          </div>
+        </div>
+
+        <div class="summary-grid">
+          <button class="metric-card metric-primary" data-jump="nutrition">
+            <span class="metric-icon">🔥</span>
+            <span class="metric-value" id="dashCalories">—</span>
+            <span class="metric-label">kcal</span>
+          </button>
+          <button class="metric-card" data-jump="nutrition">
+            <span class="metric-icon">🥩</span>
+            <span class="metric-value" id="dashProtein">—</span>
+            <span class="metric-label">eiwit</span>
+          </button>
+          <button class="metric-card" data-jump="training">
+            <span class="metric-icon">✓</span>
+            <span class="metric-value" id="dashTraining">—</span>
+            <span class="metric-label">trainingen</span>
+          </button>
+          <button class="metric-card" data-jump="progress">
+            <span class="metric-icon">😴</span>
+            <span class="metric-value" id="dashSleep">—</span>
+            <span class="metric-label">gem. slaap</span>
+          </button>
+        </div>
+
+        <div class="section-heading compact">
+          <div>
+            <p class="eyebrow">Planning</p>
+            <h2>Volgende run</h2>
+          </div>
+          <button class="text-button" data-jump="running">Schema</button>
+        </div>
+        <article class="next-run-card" id="nextRunCard"></article>
+
+        <div class="section-heading compact">
+          <div>
+            <p class="eyebrow">Voeding</p>
+            <h2>Laatste dag</h2>
+          </div>
+          <button class="text-button" data-jump="nutrition">Details</button>
+        </div>
+        <article class="nutrition-snapshot" id="nutritionSnapshot"></article>
+      </section>
+
+      <section class="view" id="view-training" data-view="training">
+        <div class="page-heading">
+          <p class="eyebrow">Bewegen</p>
+          <h2>Training</h2>
+          <p>Vink af wat je deze week hebt gedaan. Alles wordt alleen op dit apparaat opgeslagen.</p>
+        </div>
+
+        <div class="week-switcher">
+          <button id="trainingPrev" aria-label="Vorige week">‹</button>
+          <div>
+            <strong id="trainingWeekTitle">Week 43</strong>
+            <span id="trainingWeekSubtitle">19–25 oktober</span>
+          </div>
+          <button id="trainingNext" aria-label="Volgende week">›</button>
+        </div>
+
+        <div class="progress-card">
+          <div class="progress-topline">
+            <div><span id="trainingDoneCount">0</span> gedaan</div>
+            <span id="trainingPercent">0%</span>
+          </div>
+          <div class="progress-track"><div id="trainingProgressBar"></div></div>
+        </div>
+
+        <div class="training-groups" id="trainingGroups"></div>
+      </section>
+
+      <section class="view" id="view-running" data-view="running">
+        <div class="page-heading">
+          <p class="eyebrow">Hardlopen</p>
+          <h2>Loopschema</h2>
+          <p>Je opbouw richting langere duurlopen, met races en herstelweken duidelijk gemarkeerd.</p>
+        </div>
+        <div class="run-filters" id="runFilters">
+          <button class="chip active" data-filter="all">Alles</button>
+          <button class="chip" data-filter="upcoming">Komend</button>
+          <button class="chip" data-filter="race">Races</button>
+        </div>
+        <div class="run-plan" id="runPlan"></div>
+      </section>
+
+      <section class="view" id="view-nutrition" data-view="nutrition">
+        <div class="page-heading nutrition-heading">
+          <div>
+            <p class="eyebrow">Voeding</p>
+            <h2>Dagoverzicht</h2>
+            <p>Houd je kcal en belangrijkste voedingswaarden eenvoudig bij.</p>
+          </div>
+          <button class="round-add" id="nutritionAddButton" aria-label="Voeding toevoegen">+</button>
+        </div>
+
+        <div class="date-strip" id="nutritionDates"></div>
+        <article class="calorie-card" id="calorieCard"></article>
+        <div class="nutrient-grid" id="nutrientGrid"></div>
+
+        <div class="section-heading compact">
+          <div>
+            <p class="eyebrow">Geschiedenis</p>
+            <h2>Recente dagen</h2>
+          </div>
+        </div>
+        <div class="history-list" id="nutritionHistory"></div>
+      </section>
+
+      <section class="view" id="view-progress" data-view="progress">
+        <div class="page-heading">
+          <p class="eyebrow">2026</p>
+          <h2>Voortgang</h2>
+          <p>Bekijk hoe slaap, training, voeding en hardloopkilometers zich door het jaar ontwikkelen.</p>
+        </div>
+
+        <div class="metric-tabs" id="metricTabs">
+          <button class="chip active" data-metric="sleep">Slaap</button>
+          <button class="chip" data-metric="training">Training</button>
+          <button class="chip" data-metric="calories">kcal</button>
+          <button class="chip" data-metric="running">Km</button>
+        </div>
+
+        <article class="chart-card">
+          <div class="chart-heading">
+            <div>
+              <p class="eyebrow" id="chartEyebrow">Gemiddelde per week</p>
+              <h3 id="chartTitle">Slaap</h3>
+            </div>
+            <strong id="chartLatest">—</strong>
+          </div>
+          <canvas id="progressChart" height="220"></canvas>
+        </article>
+
+        <div class="stats-row" id="progressStats"></div>
+
+        <div class="section-heading compact">
+          <div>
+            <p class="eyebrow">Momenten</p>
+            <h2>Bijzonderheden</h2>
+          </div>
+        </div>
+        <div class="milestones" id="milestones"></div>
+      </section>
+    </main>
+
+    <button class="fab" id="fab" aria-label="Snel toevoegen">+</button>
+
+    <nav class="bottom-nav" aria-label="Hoofdnavigatie">
+      <button class="nav-item active" data-target="today"><span>⌂</span><small>Vandaag</small></button>
+      <button class="nav-item" data-target="training"><span>✓</span><small>Training</small></button>
+      <button class="nav-item" data-target="running"><span>⌁</span><small>Hardlopen</small></button>
+      <button class="nav-item" data-target="nutrition"><span>◉</span><small>Voeding</small></button>
+      <button class="nav-item" data-target="progress"><span>↗</span><small>Voortgang</small></button>
+    </nav>
+  </div>
+
+  <div class="sheet-backdrop" id="sheetBackdrop"></div>
+  <section class="bottom-sheet" id="quickSheet" aria-hidden="true">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div><p class="eyebrow">Snel toevoegen</p><h3>Wat wil je bijwerken?</h3></div>
+      <button class="icon-button" data-close-sheet>×</button>
+    </div>
+    <div class="quick-actions">
+      <button data-action="nutrition"><span>🍎</span><div><strong>Voeding</strong><small>kcal en voedingswaarden</small></div></button>
+      <button data-action="training"><span>✓</span><div><strong>Training</strong><small>weektraining afvinken</small></div></button>
+      <button data-action="running"><span>🏃</span><div><strong>Hardlopen</strong><small>schema bekijken</small></div></button>
+    </div>
+  </section>
+
+  <section class="modal" id="nutritionModal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="sheet-header">
+        <div><p class="eyebrow">Voeding</p><h3>Dag invullen</h3></div>
+        <button class="icon-button" data-close-modal>×</button>
+      </div>
+      <form id="nutritionForm">
+        <label>Datum<input type="date" name="date" required /></label>
+        <div class="form-grid">
+          <label>kcal<input type="number" name="calories" inputmode="decimal" /></label>
+          <label>Eiwit (g)<input type="number" step="0.1" name="protein" inputmode="decimal" /></label>
+          <label>Vezels (g)<input type="number" step="0.1" name="fiber" inputmode="decimal" /></label>
+          <label>Suiker (g)<input type="number" step="0.1" name="sugar" inputmode="decimal" /></label>
+          <label>Zout (g)<input type="number" step="0.1" name="salt" inputmode="decimal" /></label>
+          <label>Verzadigd vet (g)<input type="number" step="0.1" name="satFat" inputmode="decimal" /></label>
+        </div>
+        <button class="primary-button" type="submit">Opslaan</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="modal" id="settingsModal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="sheet-header">
+        <div><p class="eyebrow">Romy Health</p><h3>Instellingen</h3></div>
+        <button class="icon-button" data-close-settings>×</button>
+      </div>
+      <div class="settings-list">
+        <button id="exportData"><span>↓</span><div><strong>Backup exporteren</strong><small>Download je lokale gegevens als JSON</small></div></button>
+        <label class="import-row"><span>↑</span><div><strong>Backup importeren</strong><small>Herstel eerder geëxporteerde gegevens</small></div><input id="importData" type="file" accept="application/json" /></label>
+        <button id="resetLocalData" class="danger-row"><span>↺</span><div><strong>Lokale wijzigingen wissen</strong><small>Herstel de gegevens uit je oorspronkelijke document</small></div></button>
+      </div>
+      <p class="privacy-note">Je persoonlijke gezondheidsgegevens worden lokaal in je browser opgeslagen en niet naar GitHub gestuurd.</p>
+    </div>
+  </section>
+
+  <script src="app.js"></script>
+</body>
+</html>
