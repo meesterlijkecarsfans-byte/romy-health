@@ -1,32 +1,31 @@
 const marathonPlan = [
-  {key:'2026-44',year:2026,week:44,range:'26 okt – 1 nov',run1:'6 km easy / conversatiesnelheid',run2:'10 km lange duurloop easy',tritanium:'Interval / snelheid — inhoud zie je die week'},
-  {key:'2026-45',year:2026,week:45,range:'2 – 8 nov',run1:'6 km easy + 4 × 20 sec ontspannen strides',run2:'12 km lange duurloop easy',tritanium:'Interval / snelheid — inhoud zie je die week'},
-  {key:'2026-46',year:2026,week:46,range:'9 – 15 nov',run1:'6 km easy',run2:'13 km lange duurloop easy',tritanium:'Interval / snelheid — inhoud zie je die week'},
-  {key:'2026-47',year:2026,week:47,range:'16 – 22 nov',run1:'6 km easy',run2:'14 km lange duurloop easy',tritanium:'Interval / snelheid — inhoud zie je die week'},
-  {key:'2026-48',year:2026,week:48,range:'23 – 29 nov',run1:'7 km easy',run2:'15 km lange duurloop easy',tritanium:'Interval / snelheid — inhoud zie je die week'},
-  {key:'2026-49',year:2026,week:49,range:'30 nov – 6 dec',run1:'6 km easy',run2:'12 km lange duurloop easy · herstelweek',tritanium:'Interval / snelheid — inhoud zie je die week',cutback:true},
-  {key:'2026-50',year:2026,week:50,range:'7 – 13 dec',run1:'5 km easy + 4 × 20 sec strides',run2:'Adventurerun Ameland 10 km · zaterdag 12 dec',tritanium:'Licht houden / geen volle intervalprikkel vanwege 10 km-wedstrijd',race:true},
-  {key:'2026-51',year:2026,week:51,range:'14 – 20 dec',run1:'6 km zeer rustig herstel',run2:'17 km lange duurloop easy',tritanium:'Interval / snelheid — inhoud zie je die week'},
-  {key:'2026-52',year:2026,week:52,range:'21 – 27 dec',run1:'7 km easy',run2:'19 km lange duurloop easy',tritanium:'Interval / snelheid — inhoud zie je die week'},
-  {key:'2026-53',year:2026,week:53,range:'28 dec – 3 jan',run1:'6 km easy',run2:'21 km lange duurloop easy',tritanium:'Interval / snelheid — inhoud zie je die week'},
-  {key:'2027-01',year:2027,week:1,range:'4 – 10 jan',run1:'7 km easy',run2:'23 km: 15 km easy + 5 km steady @ 5:50–6:00/km + 3 km easy',tritanium:'Interval / snelheid — inhoud zie je die week',specific:true},
-  {key:'2027-02',year:2027,week:2,range:'11 – 17 jan',run1:'6 km easy',run2:'16 km lange duurloop easy · herstelweek',tritanium:'Interval / snelheid — inhoud zie je die week',cutback:true},
-  {key:'2027-03',year:2027,week:3,range:'18 – 24 jan',run1:'7 km easy',run2:'25 km: 6 km easy + 6 km @ 5:50/km + 6 km marathonpace @ 5:25/km + 7 km easy',tritanium:'Interval / snelheid — inhoud zie je die week',specific:true},
-  {key:'2027-04',year:2027,week:4,range:'25 – 31 jan',run1:'7 km easy',run2:'28 km lange duurloop easy',tritanium:'Interval / snelheid — inhoud zie je die week'},
-  {key:'2027-05',year:2027,week:5,range:'1 – 7 feb',run1:'6 km easy',run2:'22 km: 6 km easy + 8 km marathonpace @ 5:25/km + 8 km easy',tritanium:'Interval / snelheid — inhoud zie je die week',specific:true},
-  {key:'2027-06',year:2027,week:6,range:'8 – 14 feb',run1:'7 km easy',run2:'30 km lange duurloop easy',tritanium:'Interval / snelheid — inhoud zie je die week'},
-  {key:'2027-07',year:2027,week:7,range:'15 – 21 feb',run1:'6 km easy',run2:'18 km lange duurloop easy · herstelweek',tritanium:'Interval / snelheid — inhoud zie je die week',cutback:true},
-  {key:'2027-08',year:2027,week:8,range:'22 – 28 feb',run1:'5 km easy + 4 × 20 sec strides',run2:'Halve marathon Langezwaag · zaterdag 27 feb',tritanium:'Licht houden / geen volle intervalprikkel vanwege halve marathon',race:true},
-  {key:'2027-09',year:2027,week:9,range:'1 – 7 mrt',run1:'6 km zeer rustig herstel',run2:'18 km lange duurloop easy',tritanium:'Alleen normaal als je goed hersteld bent van de halve marathon',cutback:true},
-  {key:'2027-10',year:2027,week:10,range:'8 – 14 mrt',run1:'7 km easy',run2:'32 km: 18 km easy + 10 km marathonpace @ 5:25/km + 4 km easy',tritanium:'Interval / snelheid — inhoud zie je die week; houd extra volume beperkt',specific:true},
-  {key:'2027-11',year:2027,week:11,range:'15 – 21 mrt',run1:'7 km easy',run2:'30 km lange duurloop easy',tritanium:'Interval / snelheid — inhoud zie je die week'},
-  {key:'2027-12',year:2027,week:12,range:'22 – 28 mrt',run1:'6 km easy',run2:'24 km: 6 km easy + 4 km @ 5:25/km + 2 km easy + 4 km @ 5:25/km + 8 km easy',tritanium:'Interval / snelheid — inhoud zie je die week; laatste stevige marathon-specifieke week',specific:true},
-  {key:'2027-13',year:2027,week:13,range:'29 mrt – 4 apr',run1:'6 km easy + 4 × 20 sec ontspannen strides',run2:'16 km lange duurloop easy · taper',tritanium:'Korter / gecontroleerd; geen extra vermoeidheid opbouwen',cutback:true},
-  {key:'2027-14',year:2027,week:14,range:'5 – 11 apr',run1:'5 km easy + 4 × 20 sec strides, vroeg in de week',run2:'ENSCHEDE MARATHON · zondag 11 april · 42,2 km',tritanium:'Geen volle intervaltraining; alleen licht meedoen of overslaan',race:true}
+  {key:'2026-44',year:2026,week:44,range:'26 okt – 1 nov',run1:'6 km easy · 6:45–7:00/km · Z2 140–154 bpm',run2:'10 km lange duurloop · 6:45–7:00/km · Z2 140–154 bpm',tritanium:'Interval / snelheid — inhoud zie je die week'},
+  {key:'2026-45',year:2026,week:45,range:'2 – 8 nov',run1:'6 km easy · 6:45–7:00/km · Z2 + 4 × 20 sec ontspannen strides',run2:'12 km lange duurloop · 6:45–7:00/km · Z2 140–154 bpm',tritanium:'Interval / snelheid — inhoud zie je die week'},
+  {key:'2026-46',year:2026,week:46,range:'9 – 15 nov',run1:'6 km easy · 6:45–7:00/km · Z2 140–154 bpm',run2:'13 km lange duurloop · 6:45–7:00/km · Z2 140–154 bpm',tritanium:'Interval / snelheid — inhoud zie je die week'},
+  {key:'2026-47',year:2026,week:47,range:'16 – 22 nov',run1:'6 km easy · 6:45–7:00/km · Z2 140–154 bpm',run2:'14 km lange duurloop · 6:45–7:00/km · Z2 140–154 bpm',tritanium:'Interval / snelheid — inhoud zie je die week'},
+  {key:'2026-48',year:2026,week:48,range:'23 – 29 nov',run1:'7 km easy · 6:45–7:00/km · Z2 140–154 bpm',run2:'15 km lange duurloop · 6:45–7:00/km · Z2 140–154 bpm',tritanium:'Interval / snelheid — inhoud zie je die week'},
+  {key:'2026-49',year:2026,week:49,range:'30 nov – 6 dec',run1:'6 km easy · 6:45–7:00/km · Z2 140–154 bpm',run2:'12 km herstelduurloop · 6:50–7:15/km · liefst HR ≤150',tritanium:'Interval / snelheid — inhoud zie je die week',cutback:true},
+  {key:'2026-50',year:2026,week:50,range:'7 – 13 dec',run1:'5 km easy · 6:45–7:00/km · Z2 + 4 × 20 sec ontspannen strides',run2:'Adventurerun Ameland 10 km · wedstrijdtempo · zaterdag 12 dec',tritanium:'Licht houden / geen volle intervalprikkel vanwege 10 km-wedstrijd',race:true},
+  {key:'2026-51',year:2026,week:51,range:'14 – 20 dec',run1:'6 km herstel · 6:50–7:20/km · liefst HR <145',run2:'17 km lange duurloop · 6:45–7:00/km · Z2 140–154 bpm',tritanium:'Interval / snelheid — inhoud zie je die week'},
+  {key:'2026-52',year:2026,week:52,range:'21 – 27 dec',run1:'7 km easy · 6:45–7:00/km · Z2 140–154 bpm',run2:'19 km lange duurloop · 6:45–7:00/km · Z2 140–154 bpm',tritanium:'Interval / snelheid — inhoud zie je die week'},
+  {key:'2026-53',year:2026,week:53,range:'28 dec – 3 jan',run1:'6 km easy · 6:45–7:00/km · Z2 140–154 bpm',run2:'21 km lange duurloop · 6:45–7:00/km · Z2 140–154 bpm',tritanium:'Interval / snelheid — inhoud zie je die week'},
+  {key:'2027-01',year:2027,week:1,range:'4 – 10 jan',run1:'7 km easy · 6:45–7:00/km · Z2 140–154 bpm',run2:'23 km: 15 km easy @ 6:45–7:00 + 5 km steady @ 5:55–6:05 + 3 km easy @ 6:45–7:00',tritanium:'Interval / snelheid — inhoud zie je die week',specific:true},
+  {key:'2027-02',year:2027,week:2,range:'11 – 17 jan',run1:'6 km easy · 6:45–7:00/km · Z2 140–154 bpm',run2:'16 km herstelduurloop · 6:50–7:15/km · liefst HR ≤150',tritanium:'Interval / snelheid — inhoud zie je die week',cutback:true},
+  {key:'2027-03',year:2027,week:3,range:'18 – 24 jan',run1:'7 km easy · 6:45–7:00/km · Z2 140–154 bpm',run2:'25 km: 6 km easy @ 6:45–7:00 + 6 km steady @ 5:55–6:05 + 6 km MP @ 5:45–5:50 + 7 km easy @ 6:45–7:00',tritanium:'Interval / snelheid — inhoud zie je die week',specific:true},
+  {key:'2027-04',year:2027,week:4,range:'25 – 31 jan',run1:'7 km easy · 6:45–7:00/km · Z2 140–154 bpm',run2:'28 km lange duurloop · 6:45–7:05/km · Z2; hartslag leidend',tritanium:'Interval / snelheid — inhoud zie je die week'},
+  {key:'2027-05',year:2027,week:5,range:'1 – 7 feb',run1:'6 km easy · 6:45–7:00/km · Z2 140–154 bpm',run2:'22 km: 6 km easy @ 6:45–7:00 + 8 km MP @ 5:45–5:50 + 8 km easy @ 6:45–7:00',tritanium:'Interval / snelheid — inhoud zie je die week',specific:true},
+  {key:'2027-06',year:2027,week:6,range:'8 – 14 feb',run1:'7 km easy · 6:45–7:00/km · Z2 140–154 bpm',run2:'30 km lange duurloop · 6:45–7:05/km · Z2; hartslag leidend',tritanium:'Interval / snelheid — inhoud zie je die week'},
+  {key:'2027-07',year:2027,week:7,range:'15 – 21 feb',run1:'6 km easy · 6:45–7:00/km · Z2 140–154 bpm',run2:'18 km herstelduurloop · 6:50–7:15/km · liefst HR ≤150',tritanium:'Interval / snelheid — inhoud zie je die week',cutback:true},
+  {key:'2027-08',year:2027,week:8,range:'22 – 28 feb',run1:'5 km easy · 6:45–7:00/km · Z2 + 4 × 20 sec ontspannen strides',run2:'Halve marathon Langezwaag · wedstrijdtempo · zaterdag 27 feb',tritanium:'Licht houden / geen volle intervalprikkel vanwege halve marathon',race:true},
+  {key:'2027-09',year:2027,week:9,range:'1 – 7 mrt',run1:'6 km herstel · 6:50–7:20/km · liefst HR <145',run2:'18 km lange duurloop · 6:45–7:05/km · Z2 140–154 bpm',tritanium:'Alleen normaal als je goed hersteld bent van de halve marathon',cutback:true},
+  {key:'2027-10',year:2027,week:10,range:'8 – 14 mrt',run1:'7 km easy · 6:45–7:00/km · Z2 140–154 bpm',run2:'32 km: 18 km easy @ 6:45–7:05 + 10 km MP @ 5:45–5:50 + 4 km easy @ 6:50–7:10',tritanium:'Interval / snelheid — inhoud zie je die week; houd extra volume beperkt',specific:true},
+  {key:'2027-11',year:2027,week:11,range:'15 – 21 mrt',run1:'7 km easy · 6:45–7:00/km · Z2 140–154 bpm',run2:'30 km lange duurloop · 6:45–7:05/km · Z2; hartslag leidend',tritanium:'Interval / snelheid — inhoud zie je die week'},
+  {key:'2027-12',year:2027,week:12,range:'22 – 28 mrt',run1:'6 km easy · 6:45–7:00/km · Z2 140–154 bpm',run2:'24 km: 6 km easy @ 6:45–7:00 + 4 km MP @ 5:45–5:50 + 2 km easy + 4 km MP @ 5:45–5:50 + 8 km easy @ 6:45–7:00',tritanium:'Interval / snelheid — inhoud zie je die week; laatste stevige marathon-specifieke week',specific:true},
+  {key:'2027-13',year:2027,week:13,range:'29 mrt – 4 apr',run1:'6 km easy · 6:45–7:00/km · Z2 + 4 × 20 sec ontspannen strides',run2:'16 km taperduurloop · 6:50–7:05/km · rustig Z2',tritanium:'Korter / gecontroleerd; geen extra vermoeidheid opbouwen',cutback:true},
+  {key:'2027-14',year:2027,week:14,range:'5 – 11 apr',run1:'5 km easy · 6:50–7:05/km + 4 × 20 sec ontspannen strides · vroeg in de week',run2:'ENSCHEDE MARATHON · 42,2 km · zondag 11 april · definitief wedstrijdtempo later bepalen',tritanium:'Geen volle intervaltraining; alleen licht meedoen of overslaan',race:true}
 ];
 
-const marathonLegend = 'Easy = ontspannen conversatiesnelheid (richtlijn ongeveer 6:10–6:50/km, trager mag). MP = beoogd marathonpace 5:25/km. Tritanium is de vaste intensieve looptraining van de week.';
-
+const marathonLegend = 'Easy = meestal 6:45–7:00/km in Z2 (140–154 bpm). Recovery = 6:50–7:20/km, liefst onderin Z2. MP = voorlopig 5:45–5:50/km. Hartslag en gevoel gaan voor tempo. Tritanium is de vaste intensieve looptraining van de week.';
 let planFilter = 'all';
 let currentPlanIndex = (() => {
   const now = currentIsoWeek();
@@ -41,10 +40,8 @@ function checklistFor(plan){
   state.trainingV2[plan.key] ||= {tritanium:false,run1:false,run2:false,tweeslag:false,donitas1:false,donitas2:false};
   return state.trainingV2[plan.key];
 }
-
 function currentPlan(){ return marathonPlan[currentPlanIndex]; }
 function doneCount(plan){ return Object.values(checklistFor(plan)).filter(Boolean).length; }
-
 function togglePlanItem(planKey,id){
   const plan = marathonPlan.find(p => p.key === planKey);
   if(!plan) return;
@@ -66,10 +63,10 @@ renderDashboard = function(){
   document.getElementById('dashTraining').textContent = `${done}/6`;
   document.getElementById('heroTitle').textContent = done >= 5 ? 'Sterke week ✨' : done >= 3 ? 'Mooie basis' : 'Klaar voor je week';
   document.getElementById('heroCopy').textContent = `${done} van 6 vaste trainingen afgevinkt · week ${plan.week}. Tritanium telt als je intensieve loopprikkel.`;
-  const next = !check.run1 ? ['Run 1',plan.run1,'run1'] : !check.run2 ? ['Run 2',plan.run2,'run2'] : null;
+  const next = !check.run1 ? ['Run 1',plan.run1] : !check.run2 ? ['Run 2',plan.run2] : null;
   const card = document.getElementById('nextRunCard');
   if(next){
-    card.innerHTML = `<div class="run-card-top"><span class="run-pill">🏃 ${next[0]}</span><span class="run-date">Week ${plan.week} · ${plan.range}</span></div><h3>${next[1]}</h3><p>${plan.specific ? 'Marathon-specifieke week: deze run bevat bewust een gecontroleerd tempo-element.' : plan.race ? 'Wedstrijdweek: Tritanium bewust lichter houden.' : 'Rustig houden; Tritanium is deze week je snelheidstraining.'}</p>`;
+    card.innerHTML = `<div class="run-card-top"><span class="run-pill">🏃 ${next[0]}</span><span class="run-date">Week ${plan.week} · ${plan.range}</span></div><h3>${next[1]}</h3><p>${plan.specific ? 'Marathon-specifieke week: gecontroleerd tempo-element, maar Tritanium blijft je snelheidsprikkel.' : plan.race ? 'Wedstrijdweek: Tritanium bewust lichter houden.' : 'Easy = hartslag en gesprekstempo leidend; tempo is een richtlijn.'}</p>`;
   } else {
     card.innerHTML = `<div class="run-card-top"><span class="run-pill">✓ Hardlopen</span><span class="run-date">Week ${plan.week}</span></div><h3>Beide runs afgevinkt</h3><p>Mooi. Herstel is nu onderdeel van het schema.</p>`;
   }
@@ -101,7 +98,7 @@ renderRunPlan = function(){
   let plans = marathonPlan;
   if(planFilter === 'upcoming') plans = plans.filter(p => p.year > iso.year || (p.year === iso.year && p.week >= iso.week));
   if(planFilter === 'race') plans = plans.filter(p => p.race);
-  const intro = `<article class="run-week"><div class="run-week-head"><div><h3>Uitgangspunt</h3><p>1 intensieve run per week = Tritanium</p></div></div><div class="run-session"><span>Legenda</span><strong>${marathonLegend}</strong><span></span></div></article>`;
+  const intro = `<article class="run-week"><div class="run-week-head"><div><h3>Tempo & zones</h3><p>1 intensieve run per week = Tritanium</p></div></div><div class="run-session"><span>Legenda</span><strong>${marathonLegend}</strong><span></span></div></article>`;
   document.getElementById('runPlan').innerHTML = intro + plans.map(plan => {
     const check = checklistFor(plan);
     const current = plan.year === iso.year && plan.week === iso.week;
@@ -116,12 +113,12 @@ function installScheduleControls(){
   const nextOld = document.getElementById('trainingNext');
   const prev = prevOld.cloneNode(true), next = nextOld.cloneNode(true);
   prevOld.replaceWith(prev); nextOld.replaceWith(next);
-  prev.addEventListener('click',()=>{ if(currentPlanIndex>0){currentPlanIndex--;renderTraining();} });
-  next.addEventListener('click',()=>{ if(currentPlanIndex<marathonPlan.length-1){currentPlanIndex++;renderTraining();} });
+  prev.addEventListener('click',()=>{ if(currentPlanIndex>0){ currentPlanIndex--; renderTraining(); } });
+  next.addEventListener('click',()=>{ if(currentPlanIndex<marathonPlan.length-1){ currentPlanIndex++; renderTraining(); } });
 
   const filters = document.getElementById('runFilters');
   filters.innerHTML = '<button class="chip active" data-plan-filter="all">Alles</button><button class="chip" data-plan-filter="upcoming">Komend</button><button class="chip" data-plan-filter="race">Races</button>';
-  filters.querySelectorAll('[data-plan-filter]').forEach(btn=>btn.addEventListener('click',()=>{
+  filters.querySelectorAll('[data-plan-filter]').forEach(btn => btn.addEventListener('click',()=>{
     planFilter = btn.dataset.planFilter;
     filters.querySelectorAll('.chip').forEach(x=>x.classList.toggle('active',x===btn));
     renderRunPlan();
