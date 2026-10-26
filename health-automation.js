@@ -31,7 +31,6 @@ function ensureHealthDashboard(){
         <div class="metric-card"><span class="metric-icon">🔥</span><span class="metric-value" id="garminBurned">—</span><span class="metric-label">verbrand</span></div>
         <div class="metric-card"><span class="metric-icon">♥</span><span class="metric-value" id="garminRestingHr">—</span><span class="metric-label">rusthartslag</span></div>
         <div class="metric-card"><span class="metric-icon">〽</span><span class="metric-value" id="garminHrv">—</span><span class="metric-label">HRV</span></div>
-        <div class="metric-card"><span class="metric-icon">⚡</span><span class="metric-value" id="garminBodyBattery">—</span><span class="metric-label">Body Battery</span></div>
         <div class="metric-card"><span class="metric-icon">◌</span><span class="metric-value" id="garminSteps">—</span><span class="metric-label">stappen</span></div>
       </div>
       <article id="recoveryCard" class="next-run-card" style="margin-top:12px;"></article>
@@ -42,10 +41,9 @@ function recoveryMessage(day){
   if(!day) return {title:'Garmin staat klaar', copy:'Log in bij Cloud sync en tik op Synchroniseren zodra de Garmin Edge Function in Supabase is gedeployed.'};
   const signals=[];
   if(day.sleepHours != null && day.sleepHours < 6.5) signals.push('weinig slaap');
-  if(day.bodyBattery != null && day.bodyBattery < 35) signals.push('lage Body Battery');
   if(day.hrv != null && day.hrv < 30) signals.push('relatief lage HRV');
   if(signals.length) return {title:'Herstel wat lager', copy:`Signalen: ${signals.join(', ')}. Gebruik dit als trainingssignaal; gevoel en herstel blijven leidend.`};
-  return {title:'Herstel ziet er rustig uit', copy:'Geen duidelijke herstelwaarschuwingen in de beschikbare Garmin-data. Dit is een trainingssignaal, geen medische beoordeling.'};
+  return {title:'Herstel ziet er rustig uit', copy:'Geen duidelijke herstelwaarschuwingen in de beschikbare slaap-, HRV- en rusthartslagdata. Dit is een trainingssignaal, geen medische beoordeling.'};
 }
 function renderGarminHealth(){
   ensureHealthDashboard();
@@ -58,7 +56,6 @@ function renderGarminHealth(){
   document.getElementById('garminBurned').textContent = healthValue(d?.totalCalories, ' kcal');
   document.getElementById('garminRestingHr').textContent = healthValue(d?.restingHeartRate, ' bpm');
   document.getElementById('garminHrv').textContent = healthValue(d?.hrv, ' ms');
-  document.getElementById('garminBodyBattery').textContent = healthValue(d?.bodyBattery);
   document.getElementById('garminSteps').textContent = d?.steps == null ? '—' : Number(d.steps).toLocaleString('nl-NL');
   const msg = recoveryMessage(d);
   document.getElementById('recoveryCard').innerHTML = `<div class="run-card-top"><span class="run-pill">♡ Herstel</span><span class="run-date">${d ? formatFullDate(d.date) : 'Garmin'}</span></div><h3>${msg.title}</h3><p>${msg.copy}</p>`;
