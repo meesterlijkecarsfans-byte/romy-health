@@ -92,3 +92,12 @@ function importFromHash(){
 ensureNutritionPasteImport();
 setTimeout(importFromHash,150);
 window.addEventListener('hashchange',importFromHash);
+
+// Load the nutrition target layer after the basic nutrition UI is ready.
+if(!document.querySelector('script[data-romy-nutrition-goals]')){
+  const goalsScript=document.createElement('script');
+  goalsScript.src='./nutrition-goals.js?v=1';
+  goalsScript.async=false;
+  goalsScript.dataset.romyNutritionGoals='true';
+  document.head.appendChild(goalsScript);
+}
