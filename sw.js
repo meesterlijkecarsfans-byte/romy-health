@@ -1,5 +1,5 @@
-const CACHE='romy-health-v13';
-const CORE=['./styles.css','./app.js','./schedule.js','./training-extras.js','./strength-workouts.js','./nutrition-import.js','./supabase-sync.js','./health-automation.js','./nightly-review.js','./week-overview.js','./manifest.json','./icon.svg'];
+const CACHE='romy-health-v14';
+const CORE=['./styles.css','./app.js','./schedule.js','./training-extras.js','./strength-workouts.js','./strength-config.js','./nav-icons.js','./nutrition-import.js','./supabase-sync.js','./health-automation.js','./nightly-review.js','./week-overview.js','./week-summary.js','./manifest.json','./icon.svg'];
 
 self.addEventListener('install',event=>{
   self.skipWaiting();
