@@ -68,8 +68,20 @@ renderDashboard = function(){
 renderTraining();
 renderDashboard();
 
-// Load the Garmin-ready automation layer separately so the core training UI stays simple.
-const healthAutomationScript = document.createElement('script');
-healthAutomationScript.src = './health-automation.js?v=1';
-healthAutomationScript.async = false;
-document.head.appendChild(healthAutomationScript);
+// These enhancements depend on the full page being parsed first.
+window.addEventListener('load',()=>{
+  if(!document.getElementById('strengthConfigScript')){
+    const strengthConfig=document.createElement('script');
+    strengthConfig.id='strengthConfigScript';
+    strengthConfig.src='./strength-config.js?v=2';
+    strengthConfig.async=false;
+    document.body.appendChild(strengthConfig);
+  }
+  if(!document.getElementById('navIconsScript')){
+    const navIcons=document.createElement('script');
+    navIcons.id='navIconsScript';
+    navIcons.src='./nav-icons.js?v=1';
+    navIcons.async=false;
+    document.body.appendChild(navIcons);
+  }
+});
