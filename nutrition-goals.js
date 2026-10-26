@@ -8,14 +8,13 @@
   function calorieTarget(){ return Math.max(1, Number(state.nutritionGoals.calories) || 2500); }
   function bodyWeight(){ const n=Number(state.nutritionGoals.bodyWeightKg); return Number.isFinite(n)&&n>0?n:null; }
   function satFatMax(){ return calorieTarget()*0.10/9; }
-  function freeSugarMax(){ return calorieTarget()*0.10/4; }
   function fiberRange(){
     const mj=calorieTarget()*4.184/1000;
     return {min:mj*3.0, high:mj*3.5};
   }
   function proteinRange(){
     const kg=bodyWeight();
-    return kg ? {min:kg*0.83, high:kg*1.5} : null;
+    return kg ? {min:kg*1.4, high:kg*1.8, basic:kg*0.83, focus:kg*1.6} : null;
   }
   function pct(value, target){ return Math.max(0, Math.min(100, Number(value||0)/target*100)); }
   function fmt1(v){ return Number(v).toLocaleString('nl-NL',{maximumFractionDigits:1}); }
@@ -57,7 +56,6 @@
     } else if(kind==='band'){
       width=pct(v,target.high);
       if(v>=target.min && v<=target.high) cls='good';
-      else if(v>target.high) cls='';
     } else if(kind==='reference'){
       width=pct(v,target);
     }
@@ -75,15 +73,15 @@
     else {
       const calTarget=calorieTarget();
       const calPct=Math.max(0,Math.min(100,Number(n.calories||0)/calTarget*100));
-      cardEl.innerHTML=`<div class="calorie-main"><span>${formatFullDate(selectedNutritionDate)}</span><strong>${fmt(n.calories)} kcal</strong><div class="nutrition-goal-track" style="margin-top:10px;min-width:180px"><div style="width:${calPct}%"></div></div><small style="display:block;margin-top:6px;color:var(--muted)">Streefwaarde ${fmt(calTarget)} kcal</small></div><span class="calorie-badge">${fmt(calPct)}%</span>`;
+      cardEl.innerHTML=`<div class="calorie-main"><span>${formatFullDate(selectedNutritionDate)}</span><strong>${fmt(n.calories)} kcal</strong><div class="nutrition-goal-track" style="margin-top:10px;min-width:180px"><div style="width:${calPct}%"></div></div><small style="display:block;margin-top:6px;color:var(--muted)">Startdoel ${fmt(calTarget)} kcal · geen harde bovengrens</small></div><span class="calorie-badge">${fmt(calPct)}%</span>`;
       const f=fiberRange(), p=proteinRange(), sf=satFatMax();
       const cards=[];
-      if(p) cards.push(card('Eiwit',n.protein,'g','band',p,`${fmt1(p.min)}–${fmt1(p.high)} g`,`Doelbereik op basis van 0,83–1,5 g/kg lichaamsgewicht.`));
-      else cards.push(`<article class="nutrition-goal-card"><div class="nutrition-goal-head"><span>Eiwit</span><small>gewicht nodig</small></div><strong>${fmt(n.protein,1)} g</strong><div class="nutrition-goal-note">Vul je lichaamsgewicht in bij Instellingen om 0,83–1,5 g/kg te berekenen.</div></article>`);
-      cards.push(card('Vezels',n.fiber,'g','min',f.min,`min. ${fmt1(f.min)} g`,`Gebaseerd op 3,0–3,5 g/MJ; bij ${fmt(calTarget)} kcal is ca. ${fmt1(f.min)}–${fmt1(f.high)} g een passende zone.`));
-      cards.push(card('Zout',n.salt,'g','max',6,'max. 6 g','Nederlandse bovengrens voor volwassenen.'));
-      cards.push(card('Verzadigd vet',n.satFat,'g','max',sf,`max. ${fmt1(sf)} g`,`Minder dan 10 energie%; berekend op je kcal-streefwaarde.`));
-      cards.push(card('Suiker totaal',n.sugar,'g','reference',90,'RI 90 g','90 g is de EU-referentie-inname voor totale suikers, geen gezondheidskundige bovengrens. WHO <10 energie% geldt voor vrije suikers.'));
+      if(p) cards.push(card('Eiwit',n.protein,'g','band',p,`${fmt1(p.min)}–${fmt1(p.high)} g`,`Sportdoel 1,4–1,8 g/kg · mik rond ${fmt1(p.focus)} g (1,6 g/kg). Algemene ondergrens: ${fmt1(p.basic)} g (0,83 g/kg).`));
+      else cards.push(`<article class="nutrition-goal-card"><div class="nutrition-goal-head"><span>Eiwit</span><small>gewicht nodig</small></div><strong>${fmt(n.protein,1)} g</strong><div class="nutrition-goal-note">Vul je lichaamsgewicht in bij Instellingen. Voor jouw sportdoel gebruiken we 1,4–1,8 g/kg met ongeveer 1,6 g/kg als mikwaarde.</div></article>`);
+      cards.push(card('Vezels',n.fiber,'g','min',f.min,`min. ${fmt1(f.min)} g`,`Doel schaalt mee met energie-inname; bij ${fmt(calTarget)} kcal is ongeveer ${fmt1(f.min)}–${fmt1(f.high)} g een passende zone.`));
+      cards.push(card('Zout',n.salt,'g','max',6,'max. 6 g','Maximum volgens de Nederlandse richtlijn die jij wilt gebruiken.'));
+      cards.push(card('Verzadigd vet',n.satFat,'g','max',sf,`max. ${fmt1(sf)} g`,`Minder dan 10 energie%; bij ${fmt(calTarget)} kcal komt dat neer op ongeveer ${fmt1(sf)} g.`));
+      cards.push(card('Suiker totaal',n.sugar,'g','reference',90,'referentie 90 g','Niet rood als “te hoog”: gezondheidsrichtlijnen gelden voor vrije/toegevoegde suikers, terwijl Romy Health nu totale suiker bijhoudt.'));
       grid.innerHTML=cards.join('');
     }
     document.getElementById('nutritionHistory').innerHTML=[...keys].reverse().map(key=>{const x=state.nutrition[key]; return `<button class="history-row" data-history-date="${key}"><div><strong>${formatShortDate(key)}</strong><small>${fmt(x.protein)} g eiwit · ${fmt(x.fiber)} g vezels</small></div><strong>${fmt(x.calories)} kcal</strong></button>`;}).join('') || '<div class="empty-state">Nog geen dagen opgeslagen.</div>';
@@ -96,7 +94,7 @@
     const wrap=document.createElement('div');
     wrap.id='nutritionGoalSettings';
     wrap.className='nutrition-goal-settings';
-    wrap.innerHTML=`<strong>🍎 Voedingsdoelen</strong><div class="nutrition-goal-fields"><label>kcal per dag<input id="nutritionGoalCalories" type="number" inputmode="decimal" value="${calorieTarget()}"></label><label>Lichaamsgewicht (kg)<input id="nutritionGoalWeight" type="number" step="0.1" inputmode="decimal" value="${bodyWeight()??''}" placeholder="bijv. 70"></label></div><button class="nutrition-goal-save" id="saveNutritionGoals" type="button">Doelen opslaan</button><small style="display:block;margin-top:7px;color:var(--muted);line-height:1.35">Eiwit wordt automatisch berekend als 0,83–1,5 g/kg. Verzadigd vet en vezels schalen mee met je kcal-doel.</small>`;
+    wrap.innerHTML=`<strong>🍎 Voedingsdoelen</strong><div class="nutrition-goal-fields"><label>Startdoel kcal/dag<input id="nutritionGoalCalories" type="number" inputmode="decimal" value="${calorieTarget()}"></label><label>Lichaamsgewicht (kg)<input id="nutritionGoalWeight" type="number" step="0.1" inputmode="decimal" value="${bodyWeight()??''}" placeholder="bijv. 70"></label></div><button class="nutrition-goal-save" id="saveNutritionGoals" type="button">Doelen opslaan</button><small style="display:block;margin-top:7px;color:var(--muted);line-height:1.35">Voor prestatie + spierbehoud/-opbouw gebruikt de app 1,4–1,8 g eiwit/kg. Calorieën zijn een startdoel, geen harde limiet; trainingsdagen kunnen hoger uitvallen.</small>`;
     list.prepend(wrap);
     document.getElementById('saveNutritionGoals').addEventListener('click',()=>{
       const calories=Number(document.getElementById('nutritionGoalCalories').value);
