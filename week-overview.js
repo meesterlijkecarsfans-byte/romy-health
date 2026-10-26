@@ -8,7 +8,8 @@
     ['./sleep-insights.js?v=2','sleepInsightsScript'],
     ['./performance-insights.js?v=2','performanceInsightsScript'],
     ['./daily-focus.js?v=1','dailyFocusScript'],
-    ['./nav-icons.js?v=2','navIconsScript']
+    ['./dashboard-overview.js?v=1','dashboardOverviewScript'],
+    ['./nav-icons.js?v=3','navIconsScript']
   ];
   function loadNext(i){
     if(i>=modules.length) return;
