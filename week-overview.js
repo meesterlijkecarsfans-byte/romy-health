@@ -3,10 +3,11 @@
 (function(){
   const modules=[
     ['./strength-config.js?v=3','strengthConfigScript'],
-    ['./nav-icons.js?v=2','navIconsScript'],
     ['./nutrition-goals.js?v=3','nutritionGoalsScript'],
     ['./week-summary.js?v=3','weekSummaryScript'],
-    ['./sleep-insights.js?v=1','sleepInsightsScript']
+    ['./sleep-insights.js?v=2','sleepInsightsScript'],
+    ['./performance-insights.js?v=1','performanceInsightsScript'],
+    ['./nav-icons.js?v=2','navIconsScript']
   ];
   function loadNext(i){
     if(i>=modules.length) return;
