@@ -6,7 +6,8 @@
     ['./nutrition-goals.js?v=3','nutritionGoalsScript'],
     ['./week-summary.js?v=3','weekSummaryScript'],
     ['./sleep-insights.js?v=2','sleepInsightsScript'],
-    ['./performance-insights.js?v=1','performanceInsightsScript'],
+    ['./performance-insights.js?v=2','performanceInsightsScript'],
+    ['./daily-focus.js?v=1','dailyFocusScript'],
     ['./nav-icons.js?v=2','navIconsScript']
   ];
   function loadNext(i){
