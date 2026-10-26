@@ -9,11 +9,17 @@
     progress:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V10M10 19V5M16 19v-7M22 19V3"/><path d="m4 8 6-5 6 6 6-6"/></svg>'
   };
   const labels={today:'Vandaag',training:'Schema',running:'Hardlopen',strength:'Kracht',nutrition:'Voeding',progress:'Voortgang'};
-  document.querySelectorAll('.bottom-nav .nav-item').forEach(btn=>{
-    const key=btn.dataset.target;
-    if(!icons[key]) return;
-    btn.innerHTML=`<span class="uniform-nav-icon">${icons[key]}</span><small>${labels[key]}</small>`;
-  });
+
+  function applyUniformNav(){
+    document.querySelectorAll('.bottom-nav .nav-item').forEach(btn=>{
+      const key=btn.dataset.target;
+      if(!icons[key]) return;
+      const icon=btn.querySelector('.uniform-nav-icon');
+      const label=btn.querySelector('small');
+      if(!icon || label?.textContent!==labels[key]) btn.innerHTML=`<span class="uniform-nav-icon">${icons[key]}</span><small>${labels[key]}</small>`;
+    });
+  }
+
   if(!document.getElementById('uniformNavStyles')){
     const style=document.createElement('style');
     style.id='uniformNavStyles';
@@ -28,4 +34,15 @@
     `;
     document.head.appendChild(style);
   }
+
+  applyUniformNav();
+  const nav=document.querySelector('.bottom-nav');
+  if(nav && !nav.dataset.uniformObserver){
+    nav.dataset.uniformObserver='1';
+    const observer=new MutationObserver(()=>{
+      if([...nav.querySelectorAll('.nav-item')].some(btn=>!btn.querySelector('.uniform-nav-icon'))) applyUniformNav();
+    });
+    observer.observe(nav,{childList:true,subtree:true});
+  }
+  window.addEventListener('pageshow',applyUniformNav);
 })();
