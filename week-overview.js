@@ -13,7 +13,8 @@
     ['./energy-sync-fix.js?v=1','energySyncFixScript'],
     ['./progress-charts.js?v=1','progressChartsScript'],
     ['./smart-coach.js?v=1','smartCoachScript'],
-    ['./smart-coach-fixes.js?v=1','smartCoachFixesScript']
+    ['./smart-coach-fixes.js?v=1','smartCoachFixesScript'],
+    ['./smart-features-v2.js?v=1','smartFeaturesV2Script']
   ];
   function loadNext(i){
     if(i>=modules.length) return;
