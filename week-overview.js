@@ -15,7 +15,7 @@
     ['./smart-coach.js?v=1','smartCoachScript'],
     ['./smart-coach-fixes.js?v=1','smartCoachFixesScript'],
     ['./smart-features-v2.js?v=1','smartFeaturesV2Script'],
-    ['./tredict-intelligence.js?v=1','tredictIntelligenceScript']
+    ['./tredict-intelligence.js?v=2','tredictIntelligenceScript']
   ];
   function loadNext(i){
     if(i>=modules.length) return;
