@@ -11,7 +11,8 @@
     ['./dashboard-overview.js?v=1','dashboardOverviewScript'],
     ['./nav-icons.js?v=3','navIconsScript'],
     ['./energy-sync-fix.js?v=1','energySyncFixScript'],
-    ['./progress-charts.js?v=1','progressChartsScript']
+    ['./progress-charts.js?v=1','progressChartsScript'],
+    ['./smart-coach.js?v=1','smartCoachScript']
   ];
   function loadNext(i){
     if(i>=modules.length) return;
