@@ -38,10 +38,12 @@ async function safeGarminGet(token: string, path: string) {
 function asArray(value: any): any[] {
   if (Array.isArray(value)) return value;
   if (!value || typeof value !== 'object') return [];
-  for (const key of ['data', 'items', 'activities', 'activityList', 'summaries']) {
+  if (itemDate(value)) return [value];
+  for (const key of ['data', 'items', 'activities', 'activityList', 'summaries', 'dailySummaries']) {
     if (Array.isArray(value[key])) return value[key];
   }
-  return [];
+  const objectRows = Object.values(value).filter(v => v && typeof v === 'object' && itemDate(v));
+  return objectRows.length ? objectRows : [];
 }
 
 function findValue(value: any, keys: string[]): any {
@@ -148,17 +150,20 @@ Deno.serve(async (req) => {
       const st = stepsMap.get(date) || {};
 
       const sleepSeconds = numberOrNull(findValue(s, ['sleepTimeSeconds', 'totalSleepSeconds']));
-      const totalCalories = numberOrNull(findValue(d, ['totalKilocalories', 'totalCalories', 'caloriesTotal']));
-      const activeCalories = numberOrNull(findValue(d, ['activeKilocalories', 'activeCalories']));
+      const activeCalories = numberOrNull(findValue(d, ['activeKilocalories', 'activeCalories', 'activityCalories', 'wellnessActiveKilocalories']));
+      const bmrCalories = numberOrNull(findValue(d, ['bmrKilocalories', 'bmrCalories', 'restingKilocalories', 'restingCalories', 'basalCalories']));
+      const totalDirect = numberOrNull(findValue(d, ['totalKilocalories', 'totalCalories', 'caloriesTotal', 'totalKcal', 'totalCaloriesBurned', 'burnedCalories', 'caloriesBurned']));
+      const totalCalories = totalDirect ?? (activeCalories !== null && bmrCalories !== null ? activeCalories + bmrCalories : null);
       const restingHeartRate = numberOrNull(findValue(d, ['restingHeartRate', 'restingHeartRateValue']));
       const hrv = numberOrNull(findValue(h, ['lastNightAvg', 'weeklyAvg', 'hrvValue', 'average']));
       const steps = numberOrNull(findValue(st, ['totalSteps', 'steps', 'stepCount'])) ?? numberOrNull(findValue(d, ['totalSteps', 'steps']));
 
-      if ([sleepSeconds,totalCalories,activeCalories,restingHeartRate,hrv,steps].some(v => v !== null) || Object.keys(b).length) {
+      if ([sleepSeconds,totalCalories,activeCalories,bmrCalories,restingHeartRate,hrv,steps].some(v => v !== null) || Object.keys(b).length) {
         daily[date] = {
           sleepHours: sleepSeconds === null ? null : Math.round((sleepSeconds / 3600) * 10) / 10,
           totalCalories,
           activeCalories,
+          bmrCalories,
           restingHeartRate,
           hrv,
           bodyBattery: bodyBatteryValue(b),
