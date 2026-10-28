@@ -12,7 +12,8 @@
     ['./nav-icons.js?v=3','navIconsScript'],
     ['./energy-sync-fix.js?v=1','energySyncFixScript'],
     ['./progress-charts.js?v=1','progressChartsScript'],
-    ['./smart-coach.js?v=1','smartCoachScript']
+    ['./smart-coach.js?v=1','smartCoachScript'],
+    ['./smart-coach-fixes.js?v=1','smartCoachFixesScript']
   ];
   function loadNext(i){
     if(i>=modules.length) return;
