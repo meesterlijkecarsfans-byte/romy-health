@@ -8,7 +8,7 @@
     nutrition:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.5 7c-1.6-2-4.8-1.7-6.2.4C4 11 6.2 19 10 20c1 .3 1.5-.4 2-.4s1 .7 2 .4c3.8-1 6-9 3.7-12.6-1.3-2.1-4.3-2.4-5.2-.4Z"/><path d="M12 6c.2-2 1.5-3.3 3.5-3.8M12 5.5c-1.2-1.5-2.5-2-4-1.8"/></svg>',
     progress:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V10M10 19V5M16 19v-7M22 19V3"/><path d="m4 8 6-5 6 6 6-6"/></svg>'
   };
-  const labels={today:'Vandaag',training:'Schema',running:'Hardlopen',strength:'Kracht',nutrition:'Voeding',progress:'Voortgang'};
+  const labels={today:'Vandaag',training:'Schema',running:'Hardlopen',strength:'Kracht',nutrition:'Voeding',progress:'Inzichten'};
 
   function applyUniformNav(){
     document.querySelectorAll('.bottom-nav .nav-item').forEach(btn=>{
