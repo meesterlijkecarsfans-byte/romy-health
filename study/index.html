@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#ec6ca7" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Romy Study" />
+  <title>Romy Study</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <style>
+    :root{--pink:#ec6ca7;--pink2:#f7b4d1;--pinksoft:#fff0f6;--ink:#202430;--muted:#72798a;--line:#ece8ed;--bg:#faf9fb;--card:#fff;--green:#65b97a;--amber:#e5a13a;--purple:#8b67c7}
+    *{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}button,input,select{font:inherit}.app{max-width:760px;margin:0 auto;min-height:100vh;padding:0 18px 92px}.top{display:flex;align-items:center;justify-content:space-between;padding:20px 0 12px}.eyebrow{margin:0 0 4px;text-transform:uppercase;letter-spacing:.08em;font-size:11px;font-weight:800;color:var(--pink)}h1,h2,h3,p{margin-top:0}.top h1{font-size:25px;margin-bottom:0}.gear,.round{border:0;background:#fff;width:42px;height:42px;border-radius:50%;box-shadow:0 5px 18px #26131d12}.hero{background:linear-gradient(135deg,var(--pink),#d85698);color:#fff;border-radius:26px;padding:22px;box-shadow:0 12px 32px #ec6ca72b}.hero .eyebrow{color:#ffe4f0}.hero h2{font-size:26px;margin-bottom:8px}.hero p{margin:0;line-height:1.45;color:#fff7fb}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}.metric{background:#fff;border:1px solid var(--line);border-radius:18px;padding:15px}.metric strong{font-size:23px;display:block;margin:3px 0}.metric small{color:var(--muted)}.section{margin-top:23px}.section-head{display:flex;justify-content:space-between;gap:12px;align-items:end;margin-bottom:10px}.section-head h2{font-size:20px;margin:0}.textbtn{border:0;background:transparent;color:var(--pink);font-weight:800}.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:16px;margin-bottom:10px}.focus{display:flex;gap:12px;align-items:flex-start}.icon{width:42px;height:42px;border-radius:14px;background:var(--pinksoft);display:grid;place-items:center;flex:0 0 auto}.focus h3{font-size:16px;margin-bottom:5px}.focus p{font-size:13px;color:var(--muted);margin:0;line-height:1.45}.course{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}.course h3{font-size:15px;margin:0 0 4px}.course small{color:var(--muted)}.progress{height:7px;background:#f1edf0;border-radius:99px;margin-top:9px;overflow:hidden}.progress>span{display:block;height:100%;background:var(--pink);border-radius:99px}.pill{display:inline-flex;padding:5px 8px;border-radius:999px;background:var(--pinksoft);color:#b64579;font-size:10px;font-weight:800}.tabs{display:flex;gap:8px;overflow:auto;padding-bottom:2px}.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 12px;font-weight:700;font-size:12px;white-space:nowrap}.chip.active{background:var(--ink);color:#fff;border-color:var(--ink)}.view{display:none}.view.active{display:block}.nav{position:fixed;left:0;right:0;bottom:0;background:#ffffffee;backdrop-filter:blur(18px);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);padding:8px max(10px,calc((100vw - 760px)/2 + 10px)) calc(8px + env(safe-area-inset-bottom));z-index:5}.nav button{border:0;background:transparent;color:var(--muted);padding:6px;font-size:10px;font-weight:700}.nav button span{display:block;font-size:19px;margin-bottom:2px}.nav button.active{color:var(--pink)}.fab{position:fixed;right:max(22px,calc((100vw - 760px)/2 + 22px));bottom:82px;width:54px;height:54px;border:0;border-radius:50%;background:var(--pink);color:#fff;font-size:28px;box-shadow:0 10px 25px #ec6ca74a;z-index:6}.modal{position:fixed;inset:0;background:#1d10182e;display:none;align-items:flex-end;z-index:20}.modal.open{display:flex}.sheet{width:min(760px,100%);margin:0 auto;background:#fff;border-radius:24px 24px 0 0;padding:20px 18px 30px;max-height:85vh;overflow:auto}.sheettop{display:flex;justify-content:space-between;align-items:center}.close{border:0;background:#f5f2f4;border-radius:50%;width:38px;height:38px}.form{display:grid;gap:12px}.form label{display:grid;gap:6px;font-size:12px;font-weight:700}.form input,.form select{border:1px solid var(--line);border-radius:13px;padding:12px;background:#fff}.primary{border:0;background:var(--pink);color:#fff;border-radius:14px;padding:13px;font-weight:800}.row{display:flex;gap:10px}.row>*{flex:1}.empty{color:var(--muted);font-size:13px;line-height:1.5}.session{display:flex;justify-content:space-between;gap:10px;align-items:center}.session strong{font-size:14px}.session small{display:block;color:var(--muted);margin-top:3px}.score{font-weight:800;color:var(--pink)}
+    @media(min-width:650px){.grid{grid-template-columns:repeat(4,1fr)}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="top"><div><p class="eyebrow">Romy Study</p><h1 id="pageTitle">Vandaag</h1></div><button class="gear" id="settingsBtn">⚙︎</button></header>
+
+  <main>
+    <section class="view active" data-view="today">
+      <article class="hero"><p class="eyebrow">Focus van vandaag</p><h2 id="heroTitle">Kies je eerste studieblok</h2><p id="heroCopy">Je hoeft niet alles tegelijk te doen. Eén duidelijk blok is genoeg om te beginnen.</p></article>
+      <div class="grid">
+        <article class="metric"><small>Eerstvolgende tentamen</small><strong id="nextExam">—</strong><small id="nextExamCourse">Nog niet ingesteld</small></article>
+        <article class="metric"><small>Studietijd deze week</small><strong id="weekMinutes">0m</strong><small>gelogd</small></article>
+        <article class="metric"><small>Vandaag herhalen</small><strong id="reviewDue">0</strong><small>onderwerpen</small></article>
+        <article class="metric"><small>Weekstreak</small><strong id="streak">0</strong><small>studiedagen</small></article>
+      </div>
+
+      <div class="section"><div class="section-head"><div><p class="eyebrow">Vandaag</p><h2>Beste volgende stap</h2></div></div><div id="focusCard"></div></div>
+      <div class="section"><div class="section-head"><div><p class="eyebrow">Periode 1B</p><h2>Je vakken</h2></div><button class="textbtn" data-go="courses">Alles</button></div><div id="todayCourses"></div></div>
+      <div class="section"><div class="section-head"><div><p class="eyebrow">Recent</p><h2>Studieblokken</h2></div></div><div id="recentSessions"></div></div>
+    </section>
+
+    <section class="view" data-view="courses">
+      <div class="tabs" id="periodTabs"><button class="chip active" data-period="1B">Periode 1B</button><button class="chip" data-period="2A">Periode 2A</button></div>
+      <div class="section"><div class="section-head"><div><p class="eyebrow" id="periodLabel">Periode 1B</p><h2>Vakken</h2></div></div><div id="courseList"></div></div>
+    </section>
+
+    <section class="view" data-view="review">
+      <div class="section" style="margin-top:0"><div class="section-head"><div><p class="eyebrow">Spaced repetition</p><h2>Vandaag herhalen</h2></div></div><div id="reviewList"></div></div>
+      <div class="section"><div class="section-head"><div><p class="eyebrow">Nieuw</p><h2>Onderwerp toevoegen</h2></div></div><button class="primary" id="addReviewBtn">+ Onderwerp om te herhalen</button></div>
+    </section>
+
+    <section class="view" data-view="progress">
+      <div class="section" style="margin-top:0"><div class="section-head"><div><p class="eyebrow">Voortgang</p><h2>Deze periode</h2></div></div><div class="grid"><article class="metric"><small>Studieblokken</small><strong id="sessionCount">0</strong><small>totaal</small></article><article class="metric"><small>Studietijd</small><strong id="totalTime">0u</strong><small>totaal</small></article><article class="metric"><small>Gem. score</small><strong id="avgScore">—</strong><small>oefensets</small></article><article class="metric"><small>Beheerst</small><strong id="masteredCount">0</strong><small>onderwerpen</small></article></div></div>
+      <div class="section"><div class="section-head"><div><p class="eyebrow">Per vak</p><h2>Beheersing</h2></div></div><div id="progressCourses"></div></div>
+    </section>
+  </main>
+</div>
+
+<button class="fab" id="fab">+</button>
+<nav class="nav"><button class="active" data-target="today"><span>⌂</span>Vandaag</button><button data-target="courses"><span>▤</span>Vakken</button><button data-target="review"><span>↻</span>Herhalen</button><button data-target="progress"><span>↗</span>Voortgang</button></nav>
+
+<section class="modal" id="sessionModal"><div class="sheet"><div class="sheettop"><div><p class="eyebrow">Studieblok</p><h2>Log je sessie</h2></div><button class="close">×</button></div><form class="form" id="sessionForm"><label>Vak<select name="course" id="sessionCourse"></select></label><div class="row"><label>Minuten<input type="number" name="minutes" value="45" min="1" required></label><label>Oefenscore (%)<input type="number" name="score" min="0" max="100" placeholder="optioneel"></label></div><label>Wat heb je gedaan?<input name="note" placeholder="Bijv. college 3 + 20 oefenvragen"></label><button class="primary">Opslaan</button></form></div></section>
+
+<section class="modal" id="reviewModal"><div class="sheet"><div class="sheettop"><div><p class="eyebrow">Herhalen</p><h2>Nieuw onderwerp</h2></div><button class="close">×</button></div><form class="form" id="reviewForm"><label>Vak<select name="course" id="reviewCourse"></select></label><label>Onderwerp<input name="topic" required placeholder="Bijv. Fouriertransformatie"></label><label>Wanneer opnieuw?<select name="days"><option value="1">Morgen</option><option value="3">Over 3 dagen</option><option value="7">Over 7 dagen</option></select></label><button class="primary">Toevoegen</button></form></div></section>
+
+<section class="modal" id="courseModal"><div class="sheet"><div class="sheettop"><div><p class="eyebrow" id="coursePeriod"></p><h2 id="courseName"></h2></div><button class="close">×</button></div><form class="form" id="courseForm"><input type="hidden" name="course"><label>Tentamendatum<input type="date" name="examDate"></label><label>Beheersing (%)<input type="number" min="0" max="100" name="mastery"></label><label>Volgende focus<input name="focus" placeholder="Bijv. college 4 + oefenset"></label><button class="primary">Opslaan</button></form></div></section>
+
+<section class="modal" id="settingsModal"><div class="sheet"><div class="sheettop"><div><p class="eyebrow">Romy Study</p><h2>Instellingen</h2></div><button class="close">×</button></div><div class="card"><strong>Romy familie</strong><p class="empty" style="margin-top:7px">Romy Study staat los van Romy Health, maar gebruikt dezelfde rustige roze stijl. Later kunnen agenda en studiemateriaal gekoppeld worden.</p><a href="../" style="color:var(--pink);font-weight:800;text-decoration:none">← Naar Romy Health</a></div><button class="primary" id="resetBtn" style="width:100%;background:#2f3138">Lokale Study-data wissen</button></div></section>
+
+<script src="app.js"></script>
+</body>
+</html>
