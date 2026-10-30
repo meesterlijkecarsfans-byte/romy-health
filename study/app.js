@@ -11,7 +11,11 @@ let state=JSON.parse(localStorage.getItem(KEY)||'{}');
 state.courses ||= {};
 state.sessions ||= [];
 state.reviews ||= [];
+state.timetable ||= {sspPractical:'none',inspGroup:'none'};
 COURSE_DATA.forEach(c=>state.courses[c.id] ||= {examDate:'',mastery:0,focus:''});
+// Tentamens die rechtstreeks uit het opgegeven RUG-rooster zijn gehaald.
+if(!state.courses.ssp.examDate) state.courses.ssp.examDate='2027-01-26';
+if(!state.courses.insp.examDate) state.courses.insp.examDate='2027-01-15';
 let activePeriod='1B';
 
 const $=s=>document.querySelector(s); const $$=s=>[...document.querySelectorAll(s)];
@@ -30,6 +34,33 @@ function examItems(){return COURSE_DATA.map(c=>({c,s:courseState(c.id)})).filter
 function nextExam(){const today=isoDate();return examItems().find(x=>x.s.examDate>=today)||null}
 function streak(){let count=0;let d=new Date();const days=new Set(state.sessions.map(s=>s.date));while(days.has(isoDate(d))){count++;d.setDate(d.getDate()-1)}return count}
 
+function timetableEvents(){
+  const src=window.ROMY_STUDY_TIMETABLE||{events:[],practicals:{}};
+  let events=[...(src.events||[])];
+  if(state.timetable.sspPractical&&state.timetable.sspPractical!=='none'){
+    events=events.filter(e=>!(e.course==='ssp'&&e.type==='practical')||e.group===state.timetable.sspPractical);
+  }else events=events.filter(e=>!(e.course==='ssp'&&e.type==='practical'));
+  const g=state.timetable.inspGroup;
+  if(g&&g!=='none'&&src.practicals?.insp?.[g]){
+    src.practicals.insp[g].forEach(([date,start,end])=>events.push({course:'insp',date,start,end,type:'practical',group:g,title:`Practicum groep ${g}`,location:''}));
+  }
+  return events.sort((a,b)=>(a.date+a.start).localeCompare(b.date+b.start));
+}
+function upcomingTimetable(limit=6){
+  const now=new Date(); const today=isoDate(now); const time=now.toTimeString().slice(0,5);
+  return timetableEvents().filter(e=>e.date>today||(e.date===today&&e.end>=time)).slice(0,limit);
+}
+function typeLabel(type){return ({lecture:'College',tutorial:'Werkcollege',practical:'Practicum',exam:'Tentamen',inspection:'Inzage',resit:'Hertentamen'})[type]||type}
+function renderSchedule(){
+  const el=$('#upcomingSchedule'); if(!el)return;
+  const items=upcomingTimetable();
+  if(!items.length){el.innerHTML='<p class="empty">Nog geen komende roosteritems gevonden.</p>';return}
+  el.innerHTML=items.map(e=>{
+    const d=new Date(`${e.date}T12:00:00`);const c=course(e.course);
+    return `<article class="card schedule-event"><div class="schedule-date"><small>${d.toLocaleDateString('nl-NL',{month:'short'}).replace('.','')}</small><strong>${d.getDate()}</strong></div><div><h3>${esc(c?.name||e.course)} · ${esc(e.title)}</h3><p>${e.start}–${e.end}${e.location?` · ${esc(e.location)}`:''}</p></div><span class="typepill">${esc(typeLabel(e.type))}</span></article>`
+  }).join('');
+}
+
 function focusCourse(){
   const due=dueReviews();if(due.length)return course(due[0].course);
   const exams=examItems().filter(x=>x.s.examDate>=isoDate());if(exams.length)return exams[0].c;
@@ -42,9 +73,11 @@ function renderToday(){
   $('#weekMinutes').textContent=fmtMin(weekSessions().reduce((a,s)=>a+Number(s.minutes||0),0));
   $('#reviewDue').textContent=dueReviews().length;$('#streak').textContent=streak();
   const fc=focusCourse(); const fs=courseState(fc.id); const due=dueReviews().filter(r=>r.course===fc.id);
+  const upcoming=upcomingTimetable(1)[0];
   $('#heroTitle').textContent=todaySessions().length?'Mooie start — kies je volgende blok':`Begin met ${fc.name}`;
-  $('#heroCopy').textContent=due.length?`${due.length} onderwerp${due.length===1?'':'en'} van dit vak ${due.length===1?'staat':'staan'} klaar om te herhalen.`:fs.focus||'Kies één concreet onderdeel en werk daar 30–60 minuten geconcentreerd aan.';
+  $('#heroCopy').textContent=due.length?`${due.length} onderwerp${due.length===1?'':'en'} van dit vak ${due.length===1?'staat':'staan'} klaar om te herhalen.`:fs.focus||(upcoming?`Je volgende roosteritem is ${course(upcoming.course)?.name||''} op ${new Date(`${upcoming.date}T12:00:00`).toLocaleDateString('nl-NL',{weekday:'long',day:'numeric',month:'long'})}.`:'Kies één concreet onderdeel en werk daar 30–60 minuten geconcentreerd aan.');
   $('#focusCard').innerHTML=`<article class="card focus"><div class="icon">🎯</div><div><span class="pill">${esc(fc.period)}</span><h3>${esc(fc.name)}</h3><p>${esc(fs.focus||'Stel bij het vak een volgende focus in, of log direct een studieblok.')}</p></div></article>`;
+  renderSchedule();
   $('#todayCourses').innerHTML=COURSE_DATA.filter(c=>c.period==='1B').map(renderCourseCard).join('');
   renderRecent();
 }
@@ -62,7 +95,13 @@ function renderProgress(){
   $('#masteredCount').textContent=state.reviews.filter(r=>r.mastered).length;
   $('#progressCourses').innerHTML=COURSE_DATA.filter(c=>c.period==='1B').map(renderCourseCard).join('');
 }
-function renderAll(){renderToday();renderCourses();renderReviews();renderProgress();fillSelects();bindDynamic()}
+function renderSettings(){
+  const ssp=$('#sspPractical'),ig=$('#inspGroup');if(!ssp||!ig)return;
+  ssp.value=state.timetable.sspPractical||'none';
+  if(ig.options.length<=1){for(let i=1;i<=20;i++){const o=document.createElement('option');o.value=String(i);o.textContent=`Groep ${i}`;ig.appendChild(o)}}
+  ig.value=state.timetable.inspGroup||'none';
+}
+function renderAll(){renderToday();renderCourses();renderReviews();renderProgress();fillSelects();renderSettings();bindDynamic()}
 function fillSelects(){const opts=COURSE_DATA.map(c=>`<option value="${c.id}">${c.period} · ${esc(c.name)}</option>`).join('');$('#sessionCourse').innerHTML=opts;$('#reviewCourse').innerHTML=opts}
 function bindDynamic(){
   $$('[data-course]').forEach(b=>b.onclick=()=>openCourse(b.dataset.course));
@@ -75,7 +114,9 @@ function openCourse(id){const c=course(id),s=courseState(id);$('#coursePeriod').
 $$('.nav button').forEach(b=>b.onclick=()=>{const t=b.dataset.target;$$('.nav button').forEach(x=>x.classList.toggle('active',x===b));$$('.view').forEach(v=>v.classList.toggle('active',v.dataset.view===t));$('#pageTitle').textContent={today:'Vandaag',courses:'Vakken',review:'Herhalen',progress:'Voortgang'}[t]});
 $$('[data-go]').forEach(b=>b.onclick=()=>document.querySelector(`.nav button[data-target="${b.dataset.go}"]`).click());
 $$('#periodTabs .chip').forEach(b=>b.onclick=()=>{activePeriod=b.dataset.period;$$('#periodTabs .chip').forEach(x=>x.classList.toggle('active',x===b));renderCourses();bindDynamic()});
-$('#fab').onclick=()=>openModal('#sessionModal');$('#addReviewBtn').onclick=()=>openModal('#reviewModal');$('#settingsBtn').onclick=()=>openModal('#settingsModal');$$('.close').forEach(b=>b.onclick=closeModals);$$('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeModals()}));
+$('#fab').onclick=()=>openModal('#sessionModal');$('#addReviewBtn').onclick=()=>openModal('#reviewModal');$('#settingsBtn').onclick=()=>openModal('#settingsModal');$('#scheduleSettingsBtn').onclick=()=>openModal('#settingsModal');$$('.close').forEach(b=>b.onclick=closeModals);$$('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeModals()}));
+$('#sspPractical').onchange=e=>{state.timetable.sspPractical=e.target.value;save()};
+$('#inspGroup').onchange=e=>{state.timetable.inspGroup=e.target.value;save()};
 $('#sessionForm').onsubmit=e=>{e.preventDefault();const d=new FormData(e.target);state.sessions.push({id:crypto.randomUUID?.()||String(Date.now()),date:isoDate(),created:new Date().toISOString(),course:d.get('course'),minutes:Number(d.get('minutes')),score:d.get('score'),note:d.get('note')});closeModals();e.target.reset();e.target.minutes.value=45;save()};
 $('#reviewForm').onsubmit=e=>{e.preventDefault();const d=new FormData(e.target),next=new Date();next.setDate(next.getDate()+Number(d.get('days')));state.reviews.push({id:crypto.randomUUID?.()||String(Date.now()),course:d.get('course'),topic:d.get('topic'),next:isoDate(next),mastered:false});closeModals();e.target.reset();save()};
 $('#courseForm').onsubmit=e=>{e.preventDefault();const d=new FormData(e.target),s=courseState(d.get('course'));s.examDate=d.get('examDate');s.mastery=Number(d.get('mastery')||0);s.focus=d.get('focus');closeModals();save()};
