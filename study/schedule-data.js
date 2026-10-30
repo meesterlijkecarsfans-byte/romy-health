@@ -35,7 +35,10 @@ window.ROMY_STUDY_TIMETABLE={
     {course:'insp',date:'2027-01-15',start:'15:00',end:'17:00',type:'exam',title:'Digitaal tentamen',location:'Exam Hall 4'},
     {course:'insp',date:'2027-01-22',start:'09:00',end:'10:00',type:'inspection',title:'Tentameninzage',location:'Combizaal'},
     {course:'insp',date:'2027-01-22',start:'10:00',end:'11:00',type:'inspection',title:'Tentameninzage',location:'Combizaal'},
-    {course:'insp',date:'2027-01-29',start:'15:00',end:'17:00',type:'resit',title:'Hertentamen',location:'Exam Hall 2'}
+    {course:'insp',date:'2027-01-29',start:'15:00',end:'17:00',type:'resit',title:'Hertentamen',location:'Exam Hall 2'},
+
+    // Bewegingsanalyse 2 — tentamen handmatig door gebruiker bevestigd
+    {course:'ba2',date:'2027-01-13',start:'15:00',end:'17:00',type:'exam',title:'Digitaal tentamen',location:'5263.0202 Exam Hall 2'}
   ],
   practicals:{
     insp:{
@@ -62,3 +65,15 @@ window.ROMY_STUDY_TIMETABLE={
     }
   }
 };
+
+// Add-on modules load after the core app has initialized, keeping the main page simple and cache-safe.
+window.addEventListener('load',()=>{
+  const content=document.createElement('script');
+  content.src='content-data.js?v=1';
+  content.onload=()=>{
+    const attendance=document.createElement('script');
+    attendance.src='attendance.js?v=1';
+    document.body.appendChild(attendance);
+  };
+  document.body.appendChild(content);
+});
