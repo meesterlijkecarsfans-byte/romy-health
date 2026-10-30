@@ -108,11 +108,23 @@ if(!document.querySelector('script[data-romy-nutrition-goals]')){
   document.head.appendChild(goalsScript);
 }
 
-// v41: load recovery directly from the always-loaded nutrition entrypoint.
+// Recovery is attached here because nutrition-import.js is always loaded by the app.
 if(!document.getElementById('nutritionRecoveryDirectV41')){
   const recoveryScript=document.createElement('script');
   recoveryScript.id='nutritionRecoveryDirectV41';
-  recoveryScript.src='./nutrition-recovery-v40.js?v=41';
+  recoveryScript.src='./nutrition-recovery-v40.js?v=43';
   recoveryScript.async=false;
   document.body.appendChild(recoveryScript);
 }
+
+// v43: load the focused Today/Insights layer after all normal app scripts have started.
+function loadDashboardFocusV43(){
+  if(document.getElementById('dashboardFocusDirectV43')) return;
+  const focusScript=document.createElement('script');
+  focusScript.id='dashboardFocusDirectV43';
+  focusScript.src='./dashboard-focus-v42.js?v=43';
+  focusScript.async=false;
+  document.body.appendChild(focusScript);
+}
+if(document.readyState==='complete') setTimeout(loadDashboardFocusV43,300);
+else window.addEventListener('load',()=>setTimeout(loadDashboardFocusV43,300),{once:true});
