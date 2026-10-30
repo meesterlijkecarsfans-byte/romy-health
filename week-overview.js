@@ -20,7 +20,8 @@
     ['./weekly-routine.js?v=2','weeklyRoutineScript'],
     ['./insights-reorg.js?v=1','insightsReorgScript'],
     ['./progress-motivation.js?v=1','progressMotivationScript'],
-    ['./today-cockpit.js?v=1','todayCockpitScript']
+    ['./today-cockpit.js?v=1','todayCockpitScript'],
+    ['./minimal-ui.js?v=1','minimalUiScript']
   ];
   function loadNext(i){
     if(i>=modules.length) return;
