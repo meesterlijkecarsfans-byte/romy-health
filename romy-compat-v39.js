@@ -1,4 +1,4 @@
-// Romy Health v44 compatibility + focused dashboard layer.
+// Romy Health v47 compatibility + focused dashboard layer.
 (function(){
   'use strict';
 
@@ -20,6 +20,7 @@
 
   const fmt=(v,d=0)=>v==null||!Number.isFinite(Number(v))?'—':Number(v).toLocaleString('nl-NL',{minimumFractionDigits:d,maximumFractionDigits:d});
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   const todayKey=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
   const activityDate=a=>String(a?.date||a?.startTimeLocal||a?.startTime||'').slice(0,10);
   const isRun=a=>`${a?.type||''} ${a?.name||''}`.toLowerCase().includes('run')||`${a?.type||''} ${a?.name||''}`.toLowerCase().includes('hardloop');
@@ -90,6 +91,59 @@
     return {title,copy,sleep,delta,hrv,base};
   }
 
+  function recoveryRows(){
+    const rows=Object.entries(state.garminDaily||{}).map(([date,v])=>({
+      date,
+      sleep:Number(v?.sleepHours),
+      hrv:Number(v?.hrv),
+      rhr:Number(v?.restingHeartRate)
+    })).filter(x=>x.date&&[x.sleep,x.hrv,x.rhr].some(Number.isFinite)).sort((a,b)=>a.date.localeCompare(b.date));
+    return rows.slice(-21);
+  }
+  function avg(values){const xs=values.filter(Number.isFinite);return xs.length?xs.reduce((a,b)=>a+b,0)/xs.length:null;}
+  function recoveryTrend(){
+    const rows=recoveryRows();
+    const t=state.tredictSnapshot||LATEST_TREDICT;
+    const fallbackHrvBase=Number.isFinite(Number(t.hrvBaseline))?Number(t.hrvBaseline):avg(rows.map(x=>x.hrv));
+    const fallbackRhrBase=avg(rows.slice(-7).map(x=>x.rhr));
+    const fallbackSleepBase=avg(rows.slice(-7).map(x=>x.sleep))||avgSleep7();
+    const out=rows.map((row,i)=>{
+      const prev=rows.slice(Math.max(0,i-7),i);
+      const hBase=avg(prev.map(x=>x.hrv))||fallbackHrvBase;
+      const rBase=avg(prev.map(x=>x.rhr))||fallbackRhrBase;
+      const sBase=avg(prev.map(x=>x.sleep))||fallbackSleepBase;
+      let score=100;
+      let hrvLow=false,rhrHigh=false,sleepLow=false;
+      if(Number.isFinite(row.hrv)&&Number.isFinite(hBase)&&hBase>0){const ratio=row.hrv/hBase;hrvLow=ratio<.90;score-=Math.min(30,Math.max(0,(1-ratio)*200));}
+      if(Number.isFinite(row.rhr)&&Number.isFinite(rBase)){const diff=row.rhr-rBase;rhrHigh=diff>=5;score-=Math.min(25,Math.max(0,diff*4));}
+      if(Number.isFinite(row.sleep)&&Number.isFinite(sBase)){const diff=sBase-row.sleep;sleepLow=diff>=1||row.sleep<6;score-=Math.min(25,Math.max(0,diff*12));if(row.sleep<6)score-=5;}
+      const signals=[hrvLow,rhrHigh,sleepLow].filter(Boolean).length;
+      return {...row,score:Math.round(clamp(score,35,100)),signals,hrvLow,rhrHigh,sleepLow};
+    });
+    return out.slice(-14);
+  }
+  function recoveryStatus(score){return score>=80?'Goed':score>=65?'Normaal':'Aandacht';}
+  function recoveryCopy(latest){
+    if(!latest)return 'Nog te weinig dagelijkse hersteldata voor een trend.';
+    const bits=[];
+    if(latest.hrvLow)bits.push('HRV lager dan je patroon');
+    if(latest.rhrHigh)bits.push('rusthartslag hoger dan normaal');
+    if(latest.sleepLow)bits.push('slaap duidelijk lager dan je patroon');
+    if(latest.signals>=2)return `Herstel wijkt af: ${bits.join(' en ')}. Zie dit als een signaal om extra op herstel te letten, niet als een diagnose.`;
+    if(latest.signals===1)return `Eén herstelsignaal wijkt af (${bits[0]}), maar het totale patroon blijft redelijk stabiel.`;
+    return 'Herstel stabiel: HRV, rusthartslag en slaap liggen rond je persoonlijke patroon.';
+  }
+  function recoveryChartHtml(trend){
+    if(!trend.length)return '<div class="r38-muted" style="margin-top:12px">Nog geen Garmin-dagd ata beschikbaar.</div>'.replace('dagd ata','dagdata');
+    const w=300,h=92,pad=8,min=35,max=100;
+    const pts=trend.map((x,i)=>{const px=trend.length===1?w/2:pad+i*((w-pad*2)/(trend.length-1));const py=pad+(max-x.score)/(max-min)*(h-pad*2);return [px,py];});
+    const poly=pts.map(p=>p.join(',')).join(' ');
+    const circles=pts.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="${trend[i].signals>=2?'#d76a78':'#f05d9d'}"/>`).join('');
+    const first=trend[0]?.date,last=trend.at(-1)?.date;
+    const label=d=>d?new Intl.DateTimeFormat('nl-NL',{day:'numeric',month:'short'}).format(new Date(`${d}T12:00:00`)):'';
+    return `<div style="margin-top:14px"><svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Herstelscore laatste ${trend.length} dagen" style="width:100%;height:105px;overflow:visible"><line x1="${pad}" y1="${pad+(max-80)/(max-min)*(h-pad*2)}" x2="${w-pad}" y2="${pad+(max-80)/(max-min)*(h-pad*2)}" stroke="#f1e5eb" stroke-width="1" stroke-dasharray="4 4"/><polyline points="${poly}" fill="none" stroke="#f05d9d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>${circles}</svg><div style="display:flex;justify-content:space-between;margin-top:-2px;font-size:9px;color:var(--r38muted)"><span>${label(first)}</span><span>${label(last)}</span></div></div>`;
+  }
+
   function patchToday(){
     const root=document.querySelector('#view-today .r38');if(!root)return;
 
@@ -128,6 +182,14 @@
       loadCard.innerHTML=`<div class="r38-top"><div><p class="r38-kicker">Trainingsbelasting · 7 dagen</p><h2>${fmt(s.effort7)}</h2></div><strong style="color:var(--r38);font-size:12px">${r.delta==null?'—':`${r.delta>=0?'+':''}${fmt(r.delta)}%`}</strong></div><p class="r38-muted">Vorige 7 dagen: ${fmt(s.effortPrev7)} · ${r.delta==null?'geen vergelijking':Math.abs(r.delta)<10?'stabiel':'duidelijke verandering'}</p>`;
     }
 
+    let recoveryCard=document.getElementById('r47RecoveryCard');
+    if(!recoveryCard){
+      recoveryCard=document.createElement('article');recoveryCard.id='r47RecoveryCard';recoveryCard.className='r38-card';
+      if(loadCard?.nextSibling)loadCard.parentNode.insertBefore(recoveryCard,loadCard.nextSibling);else root.appendChild(recoveryCard);
+    }
+    const trend=recoveryTrend(),latest=trend.at(-1)||null,score=latest?.score??null,status=score==null?'Nog geen score':recoveryStatus(score);
+    recoveryCard.innerHTML=`<div class="r38-top"><div><p class="r38-kicker">Herstel · laatste 14 dagen</p><h2>${score==null?'—':fmt(score)}${score==null?'':` · ${status}`}</h2></div><span style="font-size:11px;color:var(--r38muted)">0–100</span></div>${recoveryChartHtml(trend)}<p class="r38-muted" style="margin:12px 0 0">${esc(recoveryCopy(latest))}</p><p class="r38-muted" style="font-size:9px;margin:6px 0 0">Gebaseerd op HRV, rusthartslag en slaap t.o.v. jouw eigen patroon.</p>`;
+
     const zoneCard=[...root.querySelectorAll('.r38-card')].find(x=>x.textContent.includes('Loopintensiteit')||x.textContent.includes('Laag / midden / hoog'));
     if(zoneCard){zoneCard.innerHTML=`<p class="r38-kicker">Intensity distribution · alle sporten</p><h3>Laag / midden / hoog</h3><p class="r38-muted" style="margin-bottom:0">Hartslag · deze week · Tredict</p><div class="r38-zonebar"><i style="width:${z.low}%"></i><i style="width:${z.medium}%"></i><i style="width:${z.high}%"></i></div><div class="r38-zonelegend"><span><b>${fmt(z.low)}%</b>Laag</span><span><b>${fmt(z.medium)}%</b>Midden</span><span><b>${fmt(z.high)}%</b>Hoog</span></div>`;}
 
@@ -137,7 +199,7 @@
 
   function patchSettings(){
     const card=document.getElementById('tredictSettingsCard');
-    if(card){const small=card.querySelector('small');if(small)small.textContent='Romy Health gebruikt nu een Tredict-snapshot via ChatGPT. Voor volledig automatische sync is later een veilige Personal API-koppeling nodig; zet nooit een token in GitHub-code.';}
+    if(card)card.style.display='none';
   }
 
   ensureTredictSnapshot();
@@ -157,9 +219,9 @@
 
   try{
     const baseSave=saveState;
-    if(typeof baseSave==='function'&&!baseSave._romyV44Wrapped){
+    if(typeof baseSave==='function'&&!baseSave._romyV47Wrapped){
       const wrapped=function(){const out=baseSave.apply(this,arguments);setTimeout(refresh,0);return out;};
-      wrapped._romyV44Wrapped=true;
+      wrapped._romyV47Wrapped=true;
       saveState=wrapped;
     }
   }catch{}
