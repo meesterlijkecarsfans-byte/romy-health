@@ -1,0 +1,10 @@
+{
+  "name":"Romy Study",
+  "short_name":"Romy Study",
+  "start_url":"./",
+  "scope":"./",
+  "display":"standalone",
+  "background_color":"#faf9fb",
+  "theme_color":"#ec6ca7",
+  "icons":[{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
