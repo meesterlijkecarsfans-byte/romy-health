@@ -1,4 +1,4 @@
-// Stable Romy Health v49 UI loader + final insights presentation layer.
+// Stable Romy Health v50 UI loader + final insights presentation layer.
 (function(){
   function load(src,id,next){
     const existing=document.getElementById(id);
@@ -17,11 +17,19 @@
     return out;
   }
 
+  function garminTotalBurn(date){
+    const day=state?.garminDaily?.[date];
+    const direct=Number(day?.totalCalories);
+    if(Number.isFinite(direct)&&direct>0)return direct;
+    const raw=Number(day?.raw?.daily?.calories?.burnedTotal);
+    return Number.isFinite(raw)&&raw>0?raw:null;
+  }
+
   function energyRows(){
     return last7Dates().map(x=>{
       const eaten=Number(state?.nutrition?.[x.date]?.calories);
-      const burned=Number(state?.garminDaily?.[x.date]?.totalCalories);
-      return {...x,in:Number.isFinite(eaten)&&eaten>0?eaten:null,out:Number.isFinite(burned)&&burned>0?burned:null};
+      const burned=garminTotalBurn(x.date);
+      return {...x,in:Number.isFinite(eaten)&&eaten>0?eaten:null,out:burned};
     });
   }
 
@@ -36,7 +44,7 @@
     }).join('');
     const diffText=paired.length?`${diff>=0?'+':''}${fmt(diff)} kcal`:'—';
     const basis=paired.length===7?'7-daags verschil':paired.length?`Verschil · ${paired.length} complete dagen`:'Nog geen complete dagen';
-    return `<p class="r38-kicker">Energiebalans · afgelopen 7 dagen</p><div class="r38-top"><div><h2>${diffText}</h2><p class="r38-muted" style="margin-bottom:0">${basis}</p></div><div style="font-size:10px;color:var(--r38muted);text-align:right"><span style="display:block"><i style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#f28ab6;margin-right:4px"></i>In</span><span style="display:block;margin-top:3px"><i style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#6f6870;margin-right:4px"></i>Uit</span></div></div><div style="display:flex;gap:6px;align-items:end;margin-top:12px">${bars}</div><div class="r38-mini-grid" style="margin-top:14px"><div class="r38-mini"><b>In</b><strong style="font-size:13px">${paired.length?fmt(totalIn):'—'}</strong><span class="r38-muted" style="font-size:9px">kcal</span></div><div class="r38-mini"><b>Uit</b><strong style="font-size:13px">${paired.length?fmt(totalOut):'—'}</strong><span class="r38-muted" style="font-size:9px">kcal</span></div><div class="r38-mini"><b>Gem./dag</b><strong style="font-size:13px">${paired.length?`${diff>=0?'+':''}${fmt(diff/paired.length)}`:'—'}</strong><span class="r38-muted" style="font-size:9px">kcal</span></div></div><p class="r38-muted" style="font-size:9px;margin:9px 0 0">Verschil wordt alleen berekend voor dagen met zowel voedingsinvoer als Garmin-verbranding. Verbranding blijft een schatting.</p>`;
+    return `<p class="r38-kicker">Energiebalans · afgelopen 7 dagen</p><div class="r38-top"><div><h2>${diffText}</h2><p class="r38-muted" style="margin-bottom:0">${basis}</p></div><div style="font-size:10px;color:var(--r38muted);text-align:right"><span style="display:block"><i style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#f28ab6;margin-right:4px"></i>In</span><span style="display:block;margin-top:3px"><i style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#6f6870;margin-right:4px"></i>Uit</span></div></div><div style="display:flex;gap:6px;align-items:end;margin-top:12px">${bars}</div><div class="r38-mini-grid" style="margin-top:14px"><div class="r38-mini"><b>In</b><strong style="font-size:13px">${paired.length?fmt(totalIn):'—'}</strong><span class="r38-muted" style="font-size:9px">kcal</span></div><div class="r38-mini"><b>Uit</b><strong style="font-size:13px">${paired.length?fmt(totalOut):'—'}</strong><span class="r38-muted" style="font-size:9px">kcal</span></div><div class="r38-mini"><b>Gem./dag</b><strong style="font-size:13px">${paired.length?`${diff>=0?'+':''}${fmt(diff/paired.length)}`:'—'}</strong><span class="r38-muted" style="font-size:9px">kcal</span></div></div><p class="r38-muted" style="font-size:9px;margin:9px 0 0">Uit = totale Garmin-verbranding (rust + actief). Verschil wordt alleen berekend voor dagen met zowel voedingsinvoer als Garmin-verbranding. Vandaag kan nog oplopen; Garmin-verbranding blijft een schatting.</p>`;
   }
 
   function sleepCardHtml(){
@@ -79,9 +87,9 @@
 
   function installFinalLayer(){
     const previous=window.romyV38Refresh;
-    if(typeof previous==='function'&&!previous._r49Wrapped){
+    if(typeof previous==='function'&&!previous._r50Wrapped){
       const wrapped=function(){const out=previous.apply(this,arguments);setTimeout(patchInsightsOrder,25);return out;};
-      wrapped._r49Wrapped=true;window.romyV38Refresh=wrapped;
+      wrapped._r50Wrapped=true;window.romyV38Refresh=wrapped;
     }
     document.querySelectorAll('.bottom-nav .nav-item').forEach(btn=>btn.addEventListener('click',()=>setTimeout(patchInsightsOrder,45)));
     window.addEventListener('pageshow',()=>setTimeout(patchInsightsOrder,60));
@@ -89,7 +97,7 @@
     setTimeout(patchInsightsOrder,40);
   }
 
-  load('./romy-ui-v38.js?v=49','romyUiV49',()=>{
-    load('./romy-compat-v39.js?v=49','romyCompatV49',installFinalLayer);
+  load('./romy-ui-v38.js?v=50','romyUiV50',()=>{
+    load('./romy-compat-v39.js?v=50','romyCompatV50',installFinalLayer);
   });
 })();
