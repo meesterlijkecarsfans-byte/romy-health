@@ -16,8 +16,9 @@
     ['./smart-coach-fixes.js?v=1','smartCoachFixesScript'],
     ['./smart-features-v2.js?v=1','smartFeaturesV2Script'],
     ['./tredict-intelligence.js?v=2','tredictIntelligenceScript'],
-    ['./weekly-routine.js?v=1','weeklyRoutineScript'],
+    ['./weekly-routine.js?v=2','weeklyRoutineScript'],
     ['./insights-reorg.js?v=1','insightsReorgScript'],
+    ['./progress-motivation.js?v=1','progressMotivationScript'],
     ['./today-cockpit.js?v=1','todayCockpitScript']
   ];
   function loadNext(i){
