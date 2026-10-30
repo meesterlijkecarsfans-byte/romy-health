@@ -157,3 +157,19 @@ renderDashboard=function(){ nightlyDashboardBase(); renderNightlyCard(); };
 
 ensureNightlyModal();
 renderNightlyCard();
+
+// Force the final calm UI layers after every legacy module has finished loading.
+window.addEventListener('load',()=>{
+  const files=[
+    ['minimal-ui.js?v=4','minimalUiDirectV4'],
+    ['schema-list.js?v=4','schemaListDirectV4'],
+    ['dashboard-insights-v2.js?v=4','dashboardInsightsDirectV4']
+  ];
+  function next(i){
+    if(i>=files.length){setTimeout(()=>window.romyMinimalRefresh?.(),100);return;}
+    const [src,id]=files[i];
+    if(document.getElementById(id)){next(i+1);return;}
+    const s=document.createElement('script');s.id=id;s.src=src;s.async=false;s.onload=()=>next(i+1);s.onerror=()=>next(i+1);document.body.appendChild(s);
+  }
+  setTimeout(()=>next(0),50);
+});
