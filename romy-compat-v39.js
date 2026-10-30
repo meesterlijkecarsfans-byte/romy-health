@@ -21,6 +21,16 @@
   const fmt=(v,d=0)=>v==null||!Number.isFinite(Number(v))?'—':Number(v).toLocaleString('nl-NL',{minimumFractionDigits:d,maximumFractionDigits:d});
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const todayKey=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
+  const activityDate=a=>String(a?.date||a?.startTimeLocal||a?.startTime||'').slice(0,10);
+  const isRun=a=>`${a?.type||''} ${a?.name||''}`.toLowerCase().includes('run')||`${a?.type||''} ${a?.name||''}`.toLowerCase().includes('hardloop');
+
+  function currentWeekBounds(){
+    const now=new Date();now.setHours(12,0,0,0);const day=now.getDay()||7;
+    const mon=new Date(now);mon.setDate(now.getDate()-(day-1));const sun=new Date(mon);sun.setDate(mon.getDate()+6);
+    const key=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    return {start:key(mon),end:key(sun)};
+  }
+  function weekKm(){const b=currentWeekBounds();return (state.garminActivities||[]).filter(a=>isRun(a)&&activityDate(a)>=b.start&&activityDate(a)<=b.end).reduce((s,a)=>s+(Number(a.distanceKm)||0),0);}
 
   function ensureTredictSnapshot(){
     try{
@@ -106,11 +116,11 @@
 
   function patchInsights(){
     const root=document.querySelector('#view-progress .r38');if(!root)return;
-    const r=readiness(),z=intensity();
+    const r=readiness(),z=intensity(),km=weekKm();
     const minis=root.querySelectorAll('.r38-mini-grid .r38-mini');
     if(minis[0])minis[0].innerHTML=`<b>Slaap · 7d</b><strong>${r.sleep==null?'—':`${fmt(r.sleep,1)} u`}</strong>`;
     if(minis[1])minis[1].innerHTML=`<b>Belasting · 7d</b><strong>${r.delta==null?'—':`${r.delta>=0?'+':''}${fmt(r.delta)}%`}</strong>`;
-    if(minis[2]){const km=(()=>{try{return [...root.querySelectorAll('.r38-card')].find(x=>x.textContent.includes('Kilometers per week'))?'Trend':'—';}catch{return '—';}})();minis[2].innerHTML=`<b>Hardlopen</b><strong>${km}</strong>`;}
+    if(minis[2])minis[2].innerHTML=`<b>Hardlopen</b><strong>${fmt(km,1)} km</strong>`;
 
     const loadCard=[...root.querySelectorAll('.r38-card')].find(x=>x.textContent.includes('Trainingsbelasting · 7 dagen'));
     if(loadCard){
