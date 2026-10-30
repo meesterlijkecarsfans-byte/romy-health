@@ -21,7 +21,8 @@
     ['./insights-reorg.js?v=1','insightsReorgScript'],
     ['./progress-motivation.js?v=1','progressMotivationScript'],
     ['./today-cockpit.js?v=1','todayCockpitScript'],
-    ['./minimal-ui.js?v=1','minimalUiScript']
+    ['./minimal-ui.js?v=1','minimalUiScript'],
+    ['./schema-list.js?v=1','schemaListScript']
   ];
   function loadNext(i){
     if(i>=modules.length) return;
