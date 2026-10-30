@@ -11,6 +11,7 @@
     0:{label:'Zondag',items:['run2'],text:'Run 2'}
   };
   window.ROMY_WEEKLY_ROUTINE=ROUTINE;
+  state.runDayOverrides ||= {};
 
   function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
   function localKey(d=new Date()){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
@@ -55,12 +56,37 @@
     });
   }
 
+  function planForToday(){
+    try{
+      const iso=currentIsoWeek();
+      return marathonPlan.find(p=>p.year===iso.year&&p.week===iso.week)||currentPlan();
+    }catch{return null;}
+  }
+  function defaultOffset(key){return key==='tritanium'?2:key==='run1'?4:6;}
+  function expectedOffset(plan,key){
+    const override=Number(state.runDayOverrides?.[plan?.key]?.[key]);
+    if(Number.isInteger(override)&&override>=0&&override<=6) return override;
+    const text=String(plan?.[key]||'').toLowerCase();
+    const named=[['maandag',0],['dinsdag',1],['woensdag',2],['donderdag',3],['vrijdag',4],['zaterdag',5],['zondag',6]];
+    const explicit=named.find(([name])=>text.includes(name));
+    if(explicit) return explicit[1];
+    return defaultOffset(key);
+  }
+
   function installTodayDefaults(){
     state.dailyPlans ||= {};
     const key=localKey();
     if(Object.prototype.hasOwnProperty.call(state.dailyPlans,key)) return;
     const dow=new Date(`${key}T12:00:00`).getDay();
-    state.dailyPlans[key]=[...(ROUTINE[dow]?.items||[])];
+    const offset=dow===0?6:dow-1;
+    const plan=planForToday();
+    const base=[...(ROUTINE[dow]?.items||[])].filter(id=>!['tritanium','run1','run2'].includes(id));
+    if(plan){
+      ['tritanium','run1','run2'].forEach(id=>{if(expectedOffset(plan,id)===offset) base.push(id);});
+    } else {
+      [...(ROUTINE[dow]?.items||[])].filter(id=>['tritanium','run1','run2'].includes(id)).forEach(id=>base.push(id));
+    }
+    state.dailyPlans[key]=base;
     try{saveState();}catch{}
   }
 
@@ -69,15 +95,7 @@
     let card=document.getElementById('weeklyRoutineCard');
     if(!card){groups.insertAdjacentHTML('beforebegin','<section id="weeklyRoutineCard" class="smart-card" style="margin-bottom:14px"></section>');card=document.getElementById('weeklyRoutineCard');}
     const order=[1,2,3,4,5,6,0];
-    card.innerHTML=`<p class="eyebrow">Vaste weekindeling</p><h3>Standaard trainingsweek</h3><p>Deze dagen worden gebruikt voor Vandaag gepland én voor het koppelen van hardloopactiviteiten. Handmatige keuzes voor een specifieke dag blijven leidend.</p><div style="display:grid;gap:7px;margin-top:12px">${order.map(d=>`<div style="display:flex;justify-content:space-between;gap:12px;padding:9px 11px;border:1px solid var(--line);border-radius:13px"><strong style="font-size:12px">${ROUTINE[d].label}</strong><span style="font-size:11px;color:var(--muted);text-align:right">${ROUTINE[d].text}</span></div>`).join('')}</div>`;
-  }
-
-  function expectedOffset(plan,key){
-    const text=String(plan?.[key]||'').toLowerCase();
-    const named=[['maandag',0],['dinsdag',1],['woensdag',2],['donderdag',3],['vrijdag',4],['zaterdag',5],['zondag',6]];
-    const explicit=named.find(([name])=>text.includes(name));
-    if(explicit) return explicit[1];
-    return key==='tritanium'?2:key==='run1'?4:6;
+    card.innerHTML=`<p class="eyebrow">Vaste weekindeling</p><h3>Standaard trainingsweek</h3><p>Deze dagen zijn je basis. Alleen hardloopsessies die je bij Slimme planhulp verschuift krijgen voor die week een andere dag; handmatige keuzes voor Vandaag blijven leidend.</p><div style="display:grid;gap:7px;margin-top:12px">${order.map(d=>`<div style="display:flex;justify-content:space-between;gap:12px;padding:9px 11px;border:1px solid var(--line);border-radius:13px"><strong style="font-size:12px">${ROUTINE[d].label}</strong><span style="font-size:11px;color:var(--muted);text-align:right">${ROUTINE[d].text}</span></div>`).join('')}</div>`;
   }
 
   function matchWeekRuns(plan){
@@ -125,8 +143,9 @@
     const card=document.getElementById('planVsActualCard');
     if(!card||typeof currentPlan!=='function') return;
     const plan=currentPlan(),slots=matchWeekRuns(plan);
-    card.innerHTML=`<p class="eyebrow">Gepland vs uitgevoerd</p><h3>Week ${plan.week}</h3><p>Koppeling gebeurt eerst op je vaste trainingsdag: woensdag Tritanium, vrijdag Run 1 en zondag Run 2. Afstand en tempo worden pas daarna gebruikt. Een sessie mag maximaal één dag verschoven zijn.</p><div class="plan-actual-list">${slots.map(slot=>{const st=runStatus(slot);return `<div class="plan-actual-row"><div><strong>${esc(slot.label)} · ${weekdayLabel(slot.expected)}</strong><span class="plan-badge">${esc(st.label)}</span></div><small>Plan: ${esc(slot.text||'vaste trainingsprikkel')}</small><small>${esc(st.detail)}</small></div>`;}).join('')}</div>`;
+    card.innerHTML=`<p class="eyebrow">Gepland vs uitgevoerd</p><h3>Week ${plan.week}</h3><p>Koppeling gebeurt eerst op de ingestelde trainingsdag uit je vaste week of Slimme planhulp. Afstand en tempo worden pas daarna gebruikt. Een sessie mag maximaal één dag verschoven zijn.</p><div class="plan-actual-list">${slots.map(slot=>{const st=runStatus(slot);return `<div class="plan-actual-row"><div><strong>${esc(slot.label)} · ${weekdayLabel(slot.expected)}</strong><span class="plan-badge">${esc(st.label)}</span></div><small>Plan: ${esc(slot.text||'vaste trainingsprikkel')}</small><small>${esc(st.detail)}</small></div>`;}).join('')}</div>`;
   }
+  window.renderCorrectPlanActual=renderCorrectPlanActual;
 
   function refresh(){
     applyActivityNames();
