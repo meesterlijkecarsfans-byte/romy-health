@@ -36,7 +36,7 @@
     }).join('');
     const diffText=paired.length?`${diff>=0?'+':''}${fmt(diff)} kcal`:'—';
     const basis=paired.length===7?'7-daags verschil':paired.length?`Verschil · ${paired.length} complete dagen`:'Nog geen complete dagen';
-    return `<p class="r38-kicker">Energiebalans · afgelopen 7 dagen</p><div class="r38-top"><div><h2>${diffText}</h2><p class="r38-muted" style="margin-bottom:0">${basis}</p></div><div style="font-size:10px;color:var(--r38muted);text-align:right"><span style="display:block"><i style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#f28ab6;margin-right:4px"></i>In</span><span style="display:block;margin-top:3px"><i style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#6f6870;margin-right:4px"></i>Uit</span></div></div><div style="display:flex;gap:6px;align-items:end;margin-top:12px">${bars}</div><div class="r38-mini-grid" style="margin-top:14px"><div class="r38-mini"><b>In</b><strong>${paired.length?`${fmt(totalIn)} kcal`:'—'}</strong></div><div class="r38-mini"><b>Uit</b><strong>${paired.length?`${fmt(totalOut)} kcal`:'—'}</strong></div><div class="r38-mini"><b>Gem./dag</b><strong>${paired.length?`${diff>=0?'+':''}${fmt(diff/paired.length)} kcal`:'—'}</strong></div></div><p class="r38-muted" style="font-size:9px;margin:9px 0 0">Verschil wordt alleen berekend voor dagen met zowel voedingsinvoer als Garmin-verbranding. Verbranding blijft een schatting.</p>`;
+    return `<p class="r38-kicker">Energiebalans · afgelopen 7 dagen</p><div class="r38-top"><div><h2>${diffText}</h2><p class="r38-muted" style="margin-bottom:0">${basis}</p></div><div style="font-size:10px;color:var(--r38muted);text-align:right"><span style="display:block"><i style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#f28ab6;margin-right:4px"></i>In</span><span style="display:block;margin-top:3px"><i style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#6f6870;margin-right:4px"></i>Uit</span></div></div><div style="display:flex;gap:6px;align-items:end;margin-top:12px">${bars}</div><div class="r38-mini-grid" style="margin-top:14px"><div class="r38-mini"><b>In</b><strong style="font-size:13px">${paired.length?fmt(totalIn):'—'}</strong><span class="r38-muted" style="font-size:9px">kcal</span></div><div class="r38-mini"><b>Uit</b><strong style="font-size:13px">${paired.length?fmt(totalOut):'—'}</strong><span class="r38-muted" style="font-size:9px">kcal</span></div><div class="r38-mini"><b>Gem./dag</b><strong style="font-size:13px">${paired.length?`${diff>=0?'+':''}${fmt(diff/paired.length)}`:'—'}</strong><span class="r38-muted" style="font-size:9px">kcal</span></div></div><p class="r38-muted" style="font-size:9px;margin:9px 0 0">Verschil wordt alleen berekend voor dagen met zowel voedingsinvoer als Garmin-verbranding. Verbranding blijft een schatting.</p>`;
   }
 
   function sleepCardHtml(){
@@ -69,7 +69,7 @@
 
     const load=[...root.querySelectorAll('.r38-card')].find(x=>x.textContent.includes('Trainingsbelasting · 7 dagen'));
     load?.remove();
-    root.querySelector('.r38-mini-grid')?.remove();
+    [...root.children].find(x=>x.classList?.contains('r38-mini-grid'))?.remove();
     [...root.querySelectorAll('.r38-card')].filter(x=>x.querySelector('.r38-kicker')?.textContent.includes('Wat valt op?')).forEach(x=>x.remove());
 
     root.append(zone,energy,sleep);
