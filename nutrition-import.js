@@ -107,3 +107,12 @@ if(!document.querySelector('script[data-romy-nutrition-goals]')){
   goalsScript.dataset.romyNutritionGoals='true';
   document.head.appendChild(goalsScript);
 }
+
+// v41: load recovery directly from the always-loaded nutrition entrypoint.
+if(!document.getElementById('nutritionRecoveryDirectV41')){
+  const recoveryScript=document.createElement('script');
+  recoveryScript.id='nutritionRecoveryDirectV41';
+  recoveryScript.src='./nutrition-recovery-v40.js?v=41';
+  recoveryScript.async=false;
+  document.body.appendChild(recoveryScript);
+}
