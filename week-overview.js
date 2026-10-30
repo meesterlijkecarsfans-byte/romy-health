@@ -22,7 +22,8 @@
     ['./progress-motivation.js?v=1','progressMotivationScript'],
     ['./today-cockpit.js?v=1','todayCockpitScript'],
     ['./minimal-ui.js?v=1','minimalUiScript'],
-    ['./schema-list.js?v=1','schemaListScript']
+    ['./schema-list.js?v=1','schemaListScript'],
+    ['./dashboard-insights-v2.js?v=1','dashboardInsightsV2Script']
   ];
   function loadNext(i){
     if(i>=modules.length) return;
