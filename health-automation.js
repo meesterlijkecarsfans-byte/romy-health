@@ -72,7 +72,7 @@ async function syncGarmin(manual=false){
     }
     if(button){ button.disabled=true; button.textContent='Bezig…'; }
     if(badge){ badge.textContent='Garmin ophalen…'; badge.style.color='var(--muted)'; }
-    const {data,error}=await cloud.functions.invoke('garmin-sync',{body:{days:7}});
+    const {data,error}=await cloud.functions.invoke('garmin-sync',{body:{days:14}});
     if(error) throw error;
     if(data?.error) throw new Error(data.error);
     if(!data?.daily && !Array.isArray(data?.activities)) throw new Error('Geen Garmin-data ontvangen.');
@@ -139,7 +139,7 @@ function ensureActivitySuggestions(){
 function ensureAutomationSettings(){
   const list=document.querySelector('#settingsModal .settings-list');
   if(!list || document.getElementById('automationSettingsCard')) return;
-  list.insertAdjacentHTML('beforeend', `<div id="automationSettingsCard" style="padding:14px 16px;border:1px solid var(--line);border-radius:16px;background:var(--surface-soft);"><strong style="display:block;">⚡ Automatiseringen</strong><small id="garminAutomationStatus" style="display:block;margin-top:6px;line-height:1.45;color:var(--muted);">Cloud sync beschikbaar. Garmin synchroniseert automatisch maximaal eens per 4 uur zodra de Edge Function is gedeployed; handmatig kan via Synchroniseren.</small></div>`);
+  list.insertAdjacentHTML('beforeend', `<div id="automationSettingsCard" style="padding:14px 16px;border:1px solid var(--line);border-radius:16px;background:var(--surface-soft);"><strong style="display:block;">⚡ Automatiseringen</strong><small id="garminAutomationStatus" style="display:block;margin-top:6px;line-height:1.45;color:var(--muted);">Cloud sync beschikbaar. Garmin synchroniseert automatisch maximaal eens per 4 uur; per sync worden de laatste 14 dagen opgehaald voor hersteltrends.</small></div>`);
 }
 window.ingestGarminData = function(payload){
   if(payload?.daily){ Object.entries(payload.daily).forEach(([date,value])=>{ state.garminDaily[date]={...(state.garminDaily[date]||{}),...value}; }); }
