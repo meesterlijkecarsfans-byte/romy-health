@@ -1,5 +1,5 @@
-const CACHE='romy-health-v28';
-const CORE=['./styles.css','./app.js','./schedule.js','./training-extras.js','./strength-workouts.js','./strength-config.js','./nav-icons.js','./nutrition-import.js','./nutrition-goals.js','./supabase-sync.js','./health-automation.js','./nightly-review.js','./week-overview.js','./week-summary.js','./sleep-insights.js','./performance-insights.js','./daily-focus.js','./dashboard-overview.js','./energy-sync-fix.js','./progress-charts.js','./smart-coach.js','./smart-coach-fixes.js','./smart-features-v2.js','./tredict-intelligence.js','./weekly-routine.js','./insights-reorg.js','./manifest.json','./icon.svg'];
+const CACHE='romy-health-v29';
+const CORE=['./styles.css','./app.js','./schedule.js','./training-extras.js','./strength-workouts.js','./strength-config.js','./nav-icons.js','./nutrition-import.js','./nutrition-goals.js','./supabase-sync.js','./health-automation.js','./nightly-review.js','./week-overview.js','./week-summary.js','./sleep-insights.js','./performance-insights.js','./daily-focus.js','./dashboard-overview.js','./energy-sync-fix.js','./progress-charts.js','./smart-coach.js','./smart-coach-fixes.js','./smart-features-v2.js','./tredict-intelligence.js','./weekly-routine.js','./insights-reorg.js','./today-cockpit.js','./manifest.json','./icon.svg'];
 
 self.addEventListener('install',event=>{
   self.skipWaiting();
