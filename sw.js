@@ -1,4 +1,4 @@
-const CACHE='romy-health-v42';
+const CACHE='romy-health-v43';
 const CORE=['./styles.css','./app.js','./schedule.js','./marathon-plan-2027.js','./training-extras.js','./strength-workouts.js','./strength-config.js','./nutrition-import.js','./nutrition-goals.js','./supabase-sync.js','./health-automation.js','./nightly-review.js','./week-overview.js','./energy-sync-fix.js','./tredict-intelligence.js','./insights-reorg.js','./progress-motivation.js','./minimal-ui.js','./schema-list.js','./dashboard-insights-v2.js','./romy-ui-v38.js','./romy-compat-v39.js','./nutrition-recovery-v40.js','./dashboard-focus-v42.js','./manifest.json','./icon.svg'];
 
 self.addEventListener('install',event=>{
