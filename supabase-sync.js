@@ -2,6 +2,8 @@ const SUPABASE_URL = 'https://mnayfvbxnyalrvnhqakz.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_lAnpGso3qJurz1WA3csA8w_27pfGqRE';
 const SYNC_LOCAL_TS = 'romy-health-sync-local-ts';
 const SYNC_REMOTE_TS = 'romy-health-sync-remote-ts';
+const TREDICT_SYNC_TS = 'romy-health-tredict-sync-ts';
+const TREDICT_SYNC_MIN_INTERVAL = 10 * 60 * 1000;
 
 const cloud = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {
@@ -14,6 +16,7 @@ const cloud = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KE
 let currentSession = null;
 let uploadTimer = null;
 let syncBusy = false;
+let tredictBusy = false;
 
 function getStoredState(){
   try { return JSON.parse(localStorage.getItem('romy-health-local-v1')) || {}; }
@@ -51,6 +54,7 @@ function rerenderAll(){
   try { renderTraining(); } catch {}
   try { renderRunPlan(); } catch {}
   try { renderProgress(); } catch {}
+  try { window.romyV38Refresh?.(); } catch {}
 }
 
 function setSyncStatus(text, tone='neutral'){
@@ -60,6 +64,72 @@ function setSyncStatus(text, tone='neutral'){
   el.textContent = text;
   el.style.color = colors[tone] || colors.neutral;
 }
+
+function setTredictStatus(text, tone='neutral'){
+  const el = document.getElementById('tredictAutoSyncStatus');
+  if(!el) return;
+  const colors = {neutral:'#817a82', ok:'#3f8f68', warn:'#b87927', error:'#c14f5a'};
+  el.textContent = text;
+  el.style.color = colors[tone] || colors.neutral;
+}
+
+function tredictStatusTime(){
+  const ts = Number(localStorage.getItem(TREDICT_SYNC_TS) || 0);
+  return ts ? new Intl.DateTimeFormat('nl-NL',{hour:'2-digit',minute:'2-digit'}).format(new Date(ts)) : null;
+}
+
+function ensureTredictAutoPanel(){
+  const list = document.querySelector('#settingsModal .settings-list');
+  if(!list || document.getElementById('tredictAutoSyncPanel')) return;
+  const panel = document.createElement('div');
+  panel.id = 'tredictAutoSyncPanel';
+  panel.style.cssText = 'padding:16px;border:1px solid var(--line);border-radius:18px;background:var(--surface-soft);margin-bottom:12px;';
+  const last = tredictStatusTime();
+  panel.innerHTML = `<div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;">
+    <div><strong style="display:block;font-size:15px;">↗ Tredict sync</strong><small id="tredictAutoSyncStatus" style="display:block;margin-top:4px;color:var(--muted);line-height:1.35;">${last?`Laatst bijgewerkt · ${last}`:'Nog niet automatisch bijgewerkt'}</small></div>
+    <button id="tredictSyncNow" type="button" style="border:0;border-radius:12px;padding:9px 11px;background:var(--pink);color:white;font-weight:750;white-space:nowrap;">Vernieuwen</button>
+  </div><small style="display:block;margin-top:8px;color:var(--muted);line-height:1.35;">Token blijft veilig in Supabase Secrets. Romy Health ontvangt alleen afgeleide Tredict-data.</small>`;
+  list.insertBefore(panel, list.firstChild);
+  document.getElementById('tredictSyncNow')?.addEventListener('click', ()=>syncTredict(true));
+}
+
+async function syncTredict(force=false){
+  if(!currentSession?.user || tredictBusy) return;
+  const last = Number(localStorage.getItem(TREDICT_SYNC_TS) || 0);
+  if(!force && last && Date.now() - last < TREDICT_SYNC_MIN_INTERVAL) return;
+
+  tredictBusy = true;
+  ensureTredictAutoPanel();
+  setTredictStatus('Tredict ophalen…');
+  try {
+    const { data, error } = await cloud.functions.invoke('tredict-sync', { body: { days: 14 } });
+    if(error) throw error;
+    if(!data?.ok || !data?.snapshot) throw new Error(data?.error || 'Geen Tredict-data ontvangen.');
+
+    const old = state.tredictSnapshot || {};
+    state.tredictSnapshot = {
+      ...old,
+      ...data.snapshot,
+      runningIntensity: data.snapshot.allSportIntensity || old.runningIntensity,
+      note: 'Automatisch via Tredict Personal API · alle sporten'
+    };
+    localStorage.setItem('romy-health-local-v1', JSON.stringify(state));
+    localStorage.setItem(TREDICT_SYNC_TS, String(Date.now()));
+    localStorage.setItem(SYNC_LOCAL_TS, String(Date.now()));
+    scheduleUpload();
+    rerenderAll();
+
+    const warnings = Array.isArray(data.warnings) ? data.warnings.length : 0;
+    setTredictStatus(`Bijgewerkt · ${new Intl.DateTimeFormat('nl-NL',{hour:'2-digit',minute:'2-digit'}).format(new Date())}${warnings?' · deels':''}`, warnings ? 'warn' : 'ok');
+  } catch(err){
+    console.error('Tredict sync', err);
+    const message = err?.context?.body?.hint || err?.message || 'onbekende fout';
+    setTredictStatus(`Tredict sync mislukt: ${message}`, 'error');
+  } finally {
+    tredictBusy = false;
+  }
+}
+window.syncTredictNow = ()=>syncTredict(true);
 
 async function uploadState(){
   if(!currentSession?.user || syncBusy) return;
@@ -188,6 +258,7 @@ function cloudPanelHtml(){
 }
 
 function ensureCloudPanel(){
+  ensureTredictAutoPanel();
   if(document.getElementById('cloudSyncPanel')) return;
   const list = document.querySelector('#settingsModal .settings-list');
   if(!list) return;
@@ -213,7 +284,7 @@ function ensureCloudPanel(){
     else setSyncStatus('Account aangemaakt. Controleer je e-mail om te bevestigen.', 'ok');
   });
 
-  document.getElementById('cloudSyncNow').addEventListener('click', smartSync);
+  document.getElementById('cloudSyncNow').addEventListener('click', async()=>{ await smartSync(); await syncTredict(true); });
   document.getElementById('cloudSignOut').addEventListener('click', ()=>cloud.auth.signOut());
 }
 
@@ -232,6 +303,7 @@ function renderAuthState(){
     signedIn.style.display='none';
     badge.textContent='';
     setSyncStatus('Niet ingelogd');
+    setTredictStatus('Log in bij Romy Health voor automatische Tredict-sync');
   }
 }
 
@@ -240,19 +312,22 @@ async function initCloudSync(){
   const { data } = await cloud.auth.getSession();
   currentSession = data.session;
   renderAuthState();
-  if(currentSession) await smartSync();
+  if(currentSession){
+    await smartSync();
+    await syncTredict(false);
+  }
 
   cloud.auth.onAuthStateChange(async(_event, session)=>{
     currentSession = session;
     renderAuthState();
-    if(session) setTimeout(smartSync, 0);
+    if(session) setTimeout(async()=>{ await smartSync(); await syncTredict(false); }, 0);
   });
 
-  window.addEventListener('focus', ()=>{ if(currentSession) smartSync(); });
-  document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible' && currentSession) smartSync(); });
+  window.addEventListener('focus', ()=>{ if(currentSession){ smartSync(); syncTredict(false); } });
+  document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible' && currentSession){ smartSync(); syncTredict(false); } });
 
   const privacy = document.querySelector('#settingsModal .privacy-note');
-  if(privacy) privacy.textContent = 'Zonder account blijven je gegevens lokaal. Als je inlogt, worden ze versleuteld via HTTPS naar je eigen Supabase-account gesynchroniseerd; RLS beperkt toegang tot jouw gebruikers-ID.';
+  if(privacy) privacy.textContent = 'Zonder account blijven je gegevens lokaal. Als je inlogt, worden je appgegevens via HTTPS naar je eigen Supabase-account gesynchroniseerd. Tredict- en Garmin-tokens blijven uitsluitend als server-side Supabase Secrets opgeslagen.';
 }
 
 initCloudSync();
