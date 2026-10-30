@@ -3,7 +3,7 @@
 
 state.garminDaily ||= {};
 state.garminActivities ||= [];
-const GARMIN_SYNC_TS = 'romy-health-garmin-sync-ts';
+const GARMIN_SYNC_TS = 'romy-health-garmin-sync-ts-v48';
 
 function latestGarminDay(){
   const keys = Object.keys(state.garminDaily || {}).sort();
