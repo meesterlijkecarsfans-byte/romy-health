@@ -17,7 +17,8 @@
     ['./smart-features-v2.js?v=1','smartFeaturesV2Script'],
     ['./tredict-intelligence.js?v=2','tredictIntelligenceScript'],
     ['./weekly-routine.js?v=1','weeklyRoutineScript'],
-    ['./insights-reorg.js?v=1','insightsReorgScript']
+    ['./insights-reorg.js?v=1','insightsReorgScript'],
+    ['./today-cockpit.js?v=1','todayCockpitScript']
   ];
   function loadNext(i){
     if(i>=modules.length) return;
