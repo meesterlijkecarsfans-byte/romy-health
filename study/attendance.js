@@ -8,12 +8,11 @@
 
   const eventKey=e=>[e.course,e.date,e.start,e.type,e.group||''].join('|');
   const trackable=e=>['lecture','tutorial','practical'].includes(e.type);
-  const oldSave=save;
   save=function(){ localStorage.setItem(KEY,JSON.stringify(state)); renderAll(); };
 
   const style=document.createElement('style');
   style.textContent=`
-    .schedule-event{grid-template-columns:52px 1fr auto}.schedule-main{min-width:0}.schedule-actions{grid-column:2/-1;display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.mini-action{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:800;color:var(--muted)}.mini-action.done{background:#eaf7ee;border-color:#cfe8d6;color:#39844b}.mini-action.content{background:var(--pinksoft);border-color:#f5d9e6;color:#b64579}.topic-bank{display:grid;gap:10px}.topic-block{border:1px solid var(--line);border-radius:16px;padding:13px;background:#fff}.topic-block h3{font-size:14px;margin:0 0 8px}.topic-chips{display:flex;gap:6px;flex-wrap:wrap}.topic-chip{display:inline-flex;padding:6px 8px;border-radius:999px;background:var(--pinksoft);color:#a94475;font-size:10px;font-weight:800}.lecture-note{width:100%;min-height:110px;border:1px solid var(--line);border-radius:14px;padding:12px;resize:vertical;font:inherit}.attendance-summary{font-size:12px;color:var(--muted);margin:5px 0 0}.event-meta{color:var(--muted);font-size:12px;margin-bottom:14px}`;
+    .schedule-event{grid-template-columns:52px 1fr auto}.schedule-main{min-width:0}.schedule-actions{grid-column:2/-1;display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.mini-action{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:800;color:var(--muted)}.mini-action.done{background:#eaf7ee;border-color:#cfe8d6;color:#39844b}.mini-action.content{background:var(--pinksoft);border-color:#f5d9e6;color:#b64579}.topic-bank{display:grid;gap:10px}.topic-block{border:1px solid var(--line);border-radius:16px;padding:13px;background:#fff}.topic-block h3{font-size:14px;margin:0 0 8px}.topic-chips{display:flex;gap:6px;flex-wrap:wrap}.topic-chip{display:inline-flex;padding:6px 8px;border-radius:999px;background:var(--pinksoft);color:#a94475;font-size:10px;font-weight:800}.lecture-note{width:100%;min-height:110px;border:1px solid var(--line);border-radius:14px;padding:12px;resize:vertical;font:inherit}.attendance-summary{font-size:12px;color:var(--muted);margin:5px 0 0}.event-meta{color:var(--muted);font-size:12px;margin-bottom:14px}.info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}.info-mini{background:#faf7f9;border:1px solid var(--line);border-radius:13px;padding:10px}.info-mini small{display:block;color:var(--muted);font-size:10px;margin-bottom:3px}.info-mini strong{font-size:12px;line-height:1.35}.warning-box{background:#fff7e8;border:1px solid #f1d7a6;border-radius:14px;padding:11px;margin-top:10px;font-size:12px;line-height:1.45;color:#75511d}.structure-list{margin:8px 0 0;padding-left:18px;color:var(--muted);font-size:12px;line-height:1.55}@media(max-width:480px){.info-grid{grid-template-columns:1fr}}`;
   document.head.appendChild(style);
 
   const modal=document.createElement('section');
@@ -24,10 +23,15 @@
   modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('open')});
 
   let currentEvent=null;
+  function overviewHtml(bank){
+    if(!bank.overview && !bank.currentWeek && !bank.structure) return '';
+    const o=bank.overview||{};
+    return `<div class="card"><p class="eyebrow">Vakoverzicht</p>${o.purpose?`<h3>${esc(o.purpose)}</h3>`:''}${Object.keys(o).length?`<div class="info-grid">${o.language?`<div class="info-mini"><small>Taal</small><strong>${esc(o.language)}</strong></div>`:''}${o.coding?`<div class="info-mini"><small>Programmeren</small><strong>${esc(o.coding)}</strong></div>`:''}${o.math?`<div class="info-mini"><small>Wiskunde</small><strong>${esc(o.math)}</strong></div>`:''}${o.teaching?`<div class="info-mini"><small>Onderwijs</small><strong>${esc(o.teaching)}</strong></div>`:''}</div>`:''}${o.assessment?`<div class="topic-block" style="margin-top:10px"><h3>Beoordeling</h3><p class="empty">${esc(o.assessment)}</p></div>`:''}${o.aiRule?`<div class="warning-box"><b>AI-regel tutorialopdrachten</b><br>${esc(o.aiRule)}</div>`:''}${bank.structure?`<div class="topic-block" style="margin-top:10px"><h3>Opbouw cursus</h3><ol class="structure-list">${bank.structure.map(x=>`<li>${esc(x.replace(/^\d+\.\s*/,''))}</li>`).join('')}</ol></div>`:''}${bank.currentWeek?`<div class="topic-block" style="margin-top:10px"><h3>${esc(bank.currentWeek.title)}</h3><p class="empty"><b>Leerdoelen:</b> ${bank.currentWeek.objectives.map(esc).join(' · ')}</p><div class="topic-chips" style="margin-top:8px">${bank.currentWeek.topics.map(t=>`<span class="topic-chip">${esc(t)}</span>`).join('')}</div></div>`:''}</div>`;
+  }
   function summaryHtml(courseId){
     const bank=window.ROMY_STUDY_CONTENT?.[courseId];
     if(!bank) return '<p class="empty">Nog geen samenvatting gekoppeld. Je eigen notities kun je hier al wel bewaren.</p>';
-    return `<div class="card"><p class="eyebrow">Samenvattingsbank</p><h3>${esc(bank.sourceLabel)}</h3>${bank.note?`<p class="empty">${esc(bank.note)}</p>`:''}<div class="topic-bank">${bank.blocks.map(b=>`<div class="topic-block"><h3>${esc(b.title)}</h3><div class="topic-chips">${b.topics.map(t=>`<span class="topic-chip">${esc(t)}</span>`).join('')}</div></div>`).join('')}</div></div>`;
+    return `${overviewHtml(bank)}<div class="card"><p class="eyebrow">Samenvattingsbank</p><h3>${esc(bank.sourceLabel)}</h3>${bank.note?`<p class="empty">${esc(bank.note)}</p>`:''}<div class="topic-bank">${bank.blocks.map(b=>`<div class="topic-block"><h3>${esc(b.title)}</h3><div class="topic-chips">${b.topics.map(t=>`<span class="topic-chip">${esc(t)}</span>`).join('')}</div></div>`).join('')}</div></div>`;
   }
   function openEvent(e){
     currentEvent=e; const c=course(e.course); const k=eventKey(e);
