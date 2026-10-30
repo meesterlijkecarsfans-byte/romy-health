@@ -1,16 +1,12 @@
 const EXTRA_WEEKLY_ACTIVITIES = [
-  {id:'tritanium', group:'Hardlopen', name:'Tritanium', hint: plan => plan.tritanium},
-  {id:'run1', group:'Hardlopen', name:'Run 1', hint: plan => plan.run1},
-  {id:'run2', group:'Hardlopen', name:'Run 2', hint: plan => plan.run2},
-  {id:'tweeslag', group:'Volleybal', name:'Tweeslag', hint: () => 'Volleybaltraining'},
+  {id:'tweeslag', group:'Volleybal', name:'Beachvolleybal', hint: () => 'Beachvolleybal'},
   {id:'donitas1', group:'Volleybal', name:'Donitas 1', hint: () => 'Volleybaltraining'},
   {id:'donitas2', group:'Volleybal', name:'Donitas 2', hint: () => 'Volleybaltraining'},
-  {id:'kracht1', group:'Kracht', name:'Kracht 1', hint: () => 'Krachttraining'},
-  {id:'kracht2', group:'Kracht', name:'Kracht 2', hint: () => 'Tweede / extra krachttraining'},
-  {id:'zwemmen', group:'Conditie & overig', name:'Zwemmen', hint: () => 'Zwemtraining / herstel'},
-  {id:'spinning', group:'Conditie & overig', name:'Spinning', hint: () => 'Spinning / indoor cycling'},
-  {id:'fietsen', group:'Conditie & overig', name:'Fietsen', hint: () => 'Buitenrit / wielrennen'},
-  {id:'extra', group:'Conditie & overig', name:'Extra sport', hint: () => 'Andere sport of extra sessie'}
+  {id:'kracht1', group:'Kracht', name:'Gym 1', hint: () => 'Krachttraining'},
+  {id:'kracht2', group:'Kracht', name:'Gym 2', hint: () => 'Krachttraining'},
+  {id:'tritanium', group:'Hardlopen', name:'Tritanium Run', hint: plan => plan.tritanium},
+  {id:'run1', group:'Hardlopen', name:'Run 2', hint: plan => plan.run1},
+  {id:'run2', group:'Hardlopen', name:'Run 3', hint: plan => plan.run2}
 ];
 
 const baseChecklistForAllSports = checklistFor;
@@ -61,26 +57,25 @@ renderDashboard = function(){
   const plan = marathonPlan.find(p => p.year === iso.year && p.week === iso.week) || marathonPlan.find(p => p.year > iso.year || (p.year === iso.year && p.week > iso.week)) || marathonPlan.at(-1);
   const done = doneCount(plan);
   document.getElementById('dashTraining').textContent = String(done);
-  document.getElementById('heroTitle').textContent = done >= 7 ? 'Actieve week ✨' : done >= 4 ? 'Mooie basis' : 'Klaar voor je week';
-  document.getElementById('heroCopy').textContent = `${done} sportmomenten afgevinkt · week ${plan.week}. Niet alles is een doel: vink alleen af wat je echt hebt gedaan.`;
+  document.getElementById('heroTitle').textContent = done >= 6 ? 'Actieve week ✨' : done >= 4 ? 'Mooie basis' : 'Klaar voor je week';
+  document.getElementById('heroCopy').textContent = `${done} sportmomenten afgevinkt · week ${plan.week}. Vink alleen af wat je echt hebt gedaan.`;
 };
 
 renderTraining();
 renderDashboard();
 
-// These enhancements depend on the full page being parsed first.
 window.addEventListener('load',()=>{
   if(!document.getElementById('strengthConfigScript')){
     const strengthConfig=document.createElement('script');
     strengthConfig.id='strengthConfigScript';
-    strengthConfig.src='./strength-config.js?v=2';
+    strengthConfig.src='./strength-config.js?v=3';
     strengthConfig.async=false;
     document.body.appendChild(strengthConfig);
   }
   if(!document.getElementById('navIconsScript')){
     const navIcons=document.createElement('script');
     navIcons.id='navIconsScript';
-    navIcons.src='./nav-icons.js?v=1';
+    navIcons.src='./nav-icons.js?v=6';
     navIcons.async=false;
     document.body.appendChild(navIcons);
   }
