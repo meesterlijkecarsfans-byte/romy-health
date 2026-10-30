@@ -2,6 +2,7 @@
 // Loads the newer modules in a stable order after the core app has initialized.
 (function(){
   const modules=[
+    ['./marathon-plan-2027.js?v=1','marathonPlan2027Script'],
     ['./strength-config.js?v=3','strengthConfigScript'],
     ['./nutrition-goals.js?v=3','nutritionGoalsScript'],
     ['./week-summary.js?v=3','weekSummaryScript'],
